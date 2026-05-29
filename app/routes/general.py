@@ -1,15 +1,17 @@
 from fastapi import APIRouter, Depends
+
 from app.core.security import require_roles
 from app.schemas.colaborador import ColaboradorResponse
+from app.models.colaborador import Colaborador
 
-router = APIRouter()
+router = APIRouter(prefix="/general", tags=["General"])
+
 
 @router.get(
-    "/general/home",
+    "/home",
     response_model=ColaboradorResponse
 )
 def home(
-    user=Depends(require_roles(["ADMIN", "GENERAL"]))
+    user: Colaborador = Depends(require_roles(["ADMIN", "GENERAL"]))
 ):
-
     return user

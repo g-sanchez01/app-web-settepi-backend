@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional
 
+# Datos del usuario desde SQL
+# Backend → frontend (mostrar perfil / datos)
 class ColaboradorResponse(BaseModel):
 
     numero_nomina: int

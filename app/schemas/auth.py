@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 
 # =========================
-# LOGIN REQUEST
+# LOGIN REQUEST: Schema de entrada (request) para el login
+# Frontend → Backend (credenciales)
 # =========================
 class LoginSchema(BaseModel):
 

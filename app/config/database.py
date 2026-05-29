@@ -28,3 +28,13 @@ SessionLocal = sessionmaker(
 # 🧱 BASE PARA MODELOS ORM
 # ================================
 Base = declarative_base()
+
+# ================================
+# 🔌 DEPENDENCY FASTAPI (OBLIGATORIO)
+# ================================
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

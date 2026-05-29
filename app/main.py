@@ -11,6 +11,7 @@ from app.models.colaborador import Colaborador
 # routers
 from app.routes.auth import router as auth_router
 from app.routes.general import router as general_router
+from app.routes.ideas import router as ideas_router
 
 # middleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,13 +37,13 @@ app.add_middleware(
 )
 
 # ================================
-# 🧱 CREAR TABLAS EN BD
+# CREAR TABLAS EN BD
 # (si no existen)
 # ================================
 Base.metadata.create_all(bind=engine)
 
 # ================================
-# 🔐 ROUTES AUTH
+# ROUTES AUTH
 # ================================
 app.include_router(
     auth_router,
@@ -51,11 +52,20 @@ app.include_router(
 )
 
 # ================================
-# 🌐 ROUTES GENERAL
+# ROUTES GENERAL
 # ================================
 app.include_router(
     general_router,
     tags=["General"]
+)
+
+# ================================
+# ROUTES IDEAS
+# ================================
+app.include_router(
+    ideas_router,
+    prefix="/ideas",
+    tags=["Ideas"]
 )
 
 # ================================
