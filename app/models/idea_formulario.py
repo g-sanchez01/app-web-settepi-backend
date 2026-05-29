@@ -9,7 +9,7 @@ class IdeaFormulario(Base):
 
     idRegistroIdea = Column(Integer, primary_key = True, index = True)
 
-    nombre = Column(String(150))
+    nombre = Column(Integer)
     nomina = Column(String(50))
     telefono = Column(String(10))
 
