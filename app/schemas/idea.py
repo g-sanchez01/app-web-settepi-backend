@@ -20,3 +20,10 @@ class IdeaResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Actualizar idea
+class IdeaUpdate(BaseModel):
+    unidadNegocio: str
+    zona: str
+    tituloIdea: str
+    descripcionIdea: str

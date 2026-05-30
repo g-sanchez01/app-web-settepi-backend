@@ -3,12 +3,12 @@ from sqlalchemy.orm import Session
 
 from app.config.database import get_db
 
-from app.schemas.idea import IdeaCreate, IdeaResponse
+from app.schemas.idea import IdeaCreate, IdeaResponse, IdeaUpdate
 from app.repositories.idea_repository import IdeaRepository
 
 
 from app.models.colaborador import Colaborador
-from app.services.idea_service import crear_idea
+from app.services.idea_service import crear_idea, editar_idea
 from app.core.security import get_current_user
 
 router = APIRouter(tags=["Ideas"])
@@ -46,4 +46,23 @@ def obtener_mis_ideas(
         db,
         str(user.numero_nomina)
     )
+
+# Editar Idea
+@router.put(
+    "/editar/{id_idea}",
+    status_code=status.HTTP_200_OK
+)
+def editar_idea_endpoint(
+    id_idea: int,
+    data: IdeaUpdate,
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+
+    idea_editada = editar_idea(db, id_idea, data)
+
+    return {
+        "message": "Idea actualizada correctamente ",
+        "idRegistroIdea": idea_editada.idRegistroIdea
+    }
         
