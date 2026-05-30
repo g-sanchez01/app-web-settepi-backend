@@ -47,11 +47,26 @@ def obtener_mis_ideas(
         str(user.numero_nomina)
     )
 
+# Obtener id de la idea
+@router.get("/{id_idea}")
+def obtener_idea_por_id(
+    id_idea: int,
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+
+    idea = IdeaRepository.obtener_por_id(db, id_idea)
+
+    if not idea:
+        raise HTTPException(
+            status_code=404,
+            detail="Idea no encontrada"
+        )
+
+    return idea
+
 # Editar Idea
-@router.put(
-    "/editar/{id_idea}",
-    status_code=status.HTTP_200_OK
-)
+@router.put("/{id_idea}")
 def editar_idea_endpoint(
     id_idea: int,
     data: IdeaUpdate,
@@ -62,7 +77,7 @@ def editar_idea_endpoint(
     idea_editada = editar_idea(db, id_idea, data)
 
     return {
-        "message": "Idea actualizada correctamente ",
+        "message": "Idea actualizada correctamente",
         "idRegistroIdea": idea_editada.idRegistroIdea
     }
         

@@ -34,13 +34,10 @@ class IdeaRepository:
         )
     
     @staticmethod
-    def actualizar_idea(db: Session, idea: IdeaFormulario, data):
-        idea.unidadNegocio = data.unidadNegocio
-        idea.zona = data.zona
-        idea.tituloIdea = data.tituloIdea
-        idea.descripcionIdea = data.descripcionIdea
+    def actualizar_idea(db: Session, idea: IdeaFormulario, data: IdeaUpdate):
+        for field, value in data.model_dump().items():
+            setattr(idea, field, value)
 
         db.commit()
         db.refresh(idea)
-
         return idea
