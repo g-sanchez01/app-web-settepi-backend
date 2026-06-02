@@ -42,3 +42,28 @@ def editar_idea(db, id_idea, data):
         )
 
     return IdeaRepository.actualizar_idea(db, idea, data)
+
+
+def enviar_idea(db: Session, id_idea: int):
+
+    idea = IdeaRepository.obtener_por_id(
+        db,
+        id_idea
+    )
+
+    if not idea:
+        raise HTTPException(
+            status_code=404,
+            detail="Idea no encontrada"
+        )
+
+    if idea.estado != "BORRADOR":
+        raise HTTPException(
+            status_code=400,
+            detail="Solo se pueden enviar ideas en BORRADOR"
+        )
+
+    return IdeaRepository.enviar_idea(
+        db,
+        idea
+    )

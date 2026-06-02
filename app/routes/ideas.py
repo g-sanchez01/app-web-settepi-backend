@@ -8,7 +8,7 @@ from app.repositories.idea_repository import IdeaRepository
 
 
 from app.models.colaborador import Colaborador
-from app.services.idea_service import crear_idea, editar_idea
+from app.services.idea_service import crear_idea, editar_idea, enviar_idea as enviar_idea_service
 from app.core.security import get_current_user
 
 router = APIRouter(tags=["Ideas"])
@@ -80,4 +80,20 @@ def editar_idea_endpoint(
         "message": "Idea actualizada correctamente",
         "idRegistroIdea": idea_editada.idRegistroIdea
     }
-        
+
+# Enviar Idea
+@router.put("/enviar/{id_idea}")
+def enviar_idea_endpoint(
+    id_idea: int,
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+    idea = enviar_idea_service(
+        db,
+        id_idea
+    )
+
+    return {
+        "message": "Idea enviada correctamente",
+        "idRegistroIdea": idea.idRegistroIdea
+    }

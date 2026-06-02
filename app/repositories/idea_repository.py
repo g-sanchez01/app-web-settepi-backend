@@ -41,3 +41,12 @@ class IdeaRepository:
         db.commit()
         db.refresh(idea)
         return idea
+    
+    @staticmethod
+    def enviar_idea(db: Session, idea: IdeaFormulario):
+        idea.estado = "ENVIADA"
+
+        db.commit()
+        db.refresh(idea)
+
+        return idea
