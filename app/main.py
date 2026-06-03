@@ -12,6 +12,7 @@ from app.models.colaborador import Colaborador
 from app.routes.auth import router as auth_router
 from app.routes.general import router as general_router
 from app.routes.ideas import router as ideas_router
+from app.routes.feedback import router as feedbacks_router
 
 # middleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -67,6 +68,16 @@ app.include_router(
     prefix="/ideas",
     tags=["Ideas"]
 )
+
+# ================================
+# ROUTES FEEDBACK
+# ================================
+app.include_router(
+    feedbacks_router,
+    prefix="/feedbacks",
+    tags=["Feedbacks"]
+)
+
 
 # ================================
 # 🏠 ENDPOINT PRINCIPAL

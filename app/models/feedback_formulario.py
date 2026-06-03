@@ -17,3 +17,4 @@ class FeedbackFormulario(Base):
     planta = Column(String(50))
     fecha = Column(DateTime, default=now_mexico)
     estado = Column(String(50), default="PENDIENTE")
+    nomina = Column(String(50))
