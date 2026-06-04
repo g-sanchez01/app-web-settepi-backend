@@ -9,3 +9,19 @@ class FeedbackRepository:
         db.refresh(feedback)
 
         return feedback
+    
+    @staticmethod
+    def obtener_por_nomina(
+        db: Session,
+        nomina: str
+    ):
+        return(
+            db.query(FeedbackFormulario)
+            .filter(
+                FeedbackFormulario.nomina == nomina
+            )
+            .order_by(
+                FeedbackFormulario.fecha.desc()
+            )
+            .all()
+        )
