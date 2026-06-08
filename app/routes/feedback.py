@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status
+from datetime import date
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db
@@ -40,7 +41,7 @@ def obtener_mis_feedbacks(
     idfeedback: int | None = None,
     tipo: str | None = None,
     estado: str | None = None,
-    fecha: str | None = None,
+    fecha: date | None = None,
     db: Session = Depends(get_db),
     user: Colaborador = Depends(get_current_user)
 ):

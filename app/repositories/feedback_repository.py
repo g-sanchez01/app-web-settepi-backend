@@ -1,4 +1,6 @@
 from app.models.feedback_formulario import FeedbackFormulario
+from sqlalchemy import cast, Date
+from datetime import date
 
 class FeedbackRepository:
 
@@ -17,7 +19,7 @@ class FeedbackRepository:
         idfeedback: int | None = None,
         tipo: str | None = None,
         estado: str | None = None,
-        fecha: str | None = None
+        fecha: date | None = None
     ):
         query = (
             db.query(FeedbackFormulario)
@@ -43,7 +45,7 @@ class FeedbackRepository:
 
         if fecha:
             query = query.filter(
-                FeedbackFormulario.fecha == fecha
+                cast(FeedbackFormulario.fecha, Date) == fecha
             )
 
         return (

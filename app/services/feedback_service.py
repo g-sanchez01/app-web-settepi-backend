@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from datetime import date
 from app.models.feedback_formulario import FeedbackFormulario
 from app.models.colaborador import Colaborador
 from app.schemas.feedback import CreateFeedback
@@ -35,7 +36,7 @@ def obtener_feedbacks(
     idfeedback: int | None = None,
     tipo: str | None = None,
     estado: str | None = None,
-    fecha: str | None = None
+    fecha: date | None = None
 ):
     return FeedbackRepository.obtener_por_nomina(
         db=db,
