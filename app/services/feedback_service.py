@@ -30,3 +30,21 @@ def crear_feedback(data: CreateFeedback, user: Colaborador, db: Session):
     )
 
     return FeedbackRepository.crear_feedback(db, nuevo_feedback)
+
+# Obtener feedbacks
+def obtener_feedbacks(
+    db: Session,
+    nomina: str,
+    idfeedback: int | None = None,
+    tipo: str | None = None,
+    estado: str | None = None,
+    fecha: str | None = None
+):
+    return FeedbackRepository.obtener_por_nomina(
+        db=db,
+        nomina=nomina,
+        idfeedback=idfeedback,
+        tipo=tipo,
+        estado=estado,
+        fecha=fecha
+    )

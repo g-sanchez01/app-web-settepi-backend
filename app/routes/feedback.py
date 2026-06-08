@@ -37,11 +37,18 @@ def registrar_feedback(
     response_model=list[FeedbackResponse]
 )
 def obtener_mis_feedbacks(
+    idfeedback: int | None = None,
+    tipo: str | None = None,
+    estado: str | None = None,
+    fecha: str | None = None,
     db: Session = Depends(get_db),
     user: Colaborador = Depends(get_current_user)
 ):
-
-    return FeedbackRepository.obtener_por_nomina(
-        db,
-        str(user.numero_nomina)
+    return obtener_feedbacks(
+        db=db,
+        nomina=str(user.numero_nomina),
+        idfeedback=idfeedback,
+        tipo=tipo,
+        estado=estado,
+        fecha=fecha
     )
