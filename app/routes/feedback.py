@@ -7,7 +7,7 @@ from app.schemas.feedback import CreateFeedback, FeedbackResponse
 from app.repositories.feedback_repository import FeedbackRepository
 
 from app.models.colaborador import Colaborador
-from app.services.feedback_service import crear_feedback
+from app.services.feedback_service import crear_feedback, obtener_feedbacks
 from app.core.security import get_current_user
 
 router = APIRouter(tags=["Feedbacks"])

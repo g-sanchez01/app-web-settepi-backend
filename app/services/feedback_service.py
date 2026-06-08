@@ -1,7 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
-from datetime import datetime
-
 from app.models.feedback_formulario import FeedbackFormulario
 from app.models.colaborador import Colaborador
 from app.schemas.feedback import CreateFeedback
