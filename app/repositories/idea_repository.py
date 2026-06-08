@@ -1,4 +1,6 @@
 from app.models.idea_formulario import IdeaFormulario
+from sqlalchemy import cast, Date
+from datetime import date
 
 class IdeaRepository:
 
@@ -12,13 +14,41 @@ class IdeaRepository:
     @staticmethod
     def obtener_por_nomina(
         db: Session,
-        nomina: str
+        nomina: str,
+        idRegistroIdea: str | None = None,
+        tituloIdea: str | None = None,
+        estado: str | None = None,
+        fecha: date | None = None
     ):
-        return (
+        query = (
             db.query(IdeaFormulario)
             .filter(
                 IdeaFormulario.nomina == nomina
             )
+        )
+
+        if idRegistroIdea:
+            query = query.filter(
+                IdeaFormulario.idRegistroIdea == idRegistroIdea
+            )
+            
+        if tituloIdea:
+            query = query.filter(
+                IdeaFormulario.tituloIdea == tituloIdea
+            )
+
+        if estado:
+            query = query.filter(
+                IdeaFormulario.estado == estado
+            )
+
+        if fecha:
+            query = query.filter(
+                cast(IdeaFormulario.fecha, Date) == fecha
+            )
+            
+        return (
+            query
             .order_by(
                 IdeaFormulario.fecha.desc()
             )

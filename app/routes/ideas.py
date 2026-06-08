@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
+from datetime import date
 
 from app.config.database import get_db
 
@@ -8,7 +9,7 @@ from app.repositories.idea_repository import IdeaRepository
 
 
 from app.models.colaborador import Colaborador
-from app.services.idea_service import crear_idea, editar_idea, enviar_idea as enviar_idea_service
+from app.services.idea_service import crear_idea, editar_idea, obtener_ideas, enviar_idea as enviar_idea_service
 from app.core.security import get_current_user
 
 router = APIRouter(tags=["Ideas"])
@@ -38,13 +39,21 @@ def registrar_idea(
     response_model=list[IdeaResponse]
 )
 def obtener_mis_ideas(
+    idRegistroIdea: int | None = None,
+    tituloIdea: str | None = None,
+    estado: str | None = None,
+    fecha: date | None = None,
     db: Session = Depends(get_db),
     user: Colaborador = Depends(get_current_user)
 ):
 
-    return IdeaRepository.obtener_por_nomina(
-        db,
-        str(user.numero_nomina)
+    return obtener_ideas(
+        db=db,
+        nomina=str(user.numero_nomina),
+        idRegistroIdea=idRegistroIdea,
+        tituloIdea=tituloIdea,
+        estado=estado,
+        fecha=fecha
     )
 
 # Obtener id de la idea

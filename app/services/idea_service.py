@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from datetime import datetime
+from datetime import date
 
 from app.models.idea_formulario import IdeaFormulario
 from app.models.colaborador import Colaborador
@@ -66,4 +66,21 @@ def enviar_idea(db: Session, id_idea: int):
     return IdeaRepository.enviar_idea(
         db,
         idea
+    )
+
+def obtener_ideas(
+    db: Session,
+    nomina: str,
+    idRegistroIdea: int | None = None,
+    tituloIdea: str | None = None,
+    estado: str | None = None,
+    fecha: date | None = None
+):
+    return IdeaRepository.obtener_por_nomina(
+        db=db,
+        nomina=nomina,
+        idRegistroIdea=idRegistroIdea,
+        tituloIdea=tituloIdea,
+        estado=estado,
+        fecha=fecha
     )
