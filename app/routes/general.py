@@ -12,6 +12,6 @@ router = APIRouter(prefix="/general", tags=["General"])
     response_model=ColaboradorResponse
 )
 def home(
-    user: Colaborador = Depends(require_roles(["ADMIN", "GENERAL"]))
+    user: Colaborador = Depends(require_roles(["ADMIN", "GENERAL", "GESTOR"]))
 ):
     return user

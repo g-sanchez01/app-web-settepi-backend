@@ -4,6 +4,10 @@ from sqlalchemy.orm import Session
 from app.config.database import get_db
 from app.services.auth_service import authenticate_user
 
+from app.core.security import get_current_user
+from app.schemas.colaborador import ColaboradorResponse
+from app.models.colaborador import Colaborador
+
 router = APIRouter()
 
 @router.post("/login")
@@ -16,3 +20,13 @@ def login(
         imss=data["imss"],
         db=db
     )
+
+
+@router.get(
+    "/me",
+    response_model=ColaboradorResponse
+)
+def me(
+    user: Colaborador = Depends(get_current_user)
+):
+    return user
