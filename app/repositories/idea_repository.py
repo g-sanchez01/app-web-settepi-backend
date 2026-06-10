@@ -80,3 +80,84 @@ class IdeaRepository:
         db.refresh(idea)
 
         return idea
+    
+    @staticmethod
+    def obtener_todas(
+        db: Session,
+        idRegistroIdea: str | None = None,
+        nombre: str | None = None,
+        nomina: str | None = None,
+        telefono: str | None = None,
+        unidadNegocio: str | None = None,
+        zona: str | None = None,
+        departamento: str | None = None,
+        tituloIdea: str | None = None,
+        estado: str | None = None,
+        fecha: date | None = None,
+        offset: int = 0,
+        limit: int = 10
+    ):
+        query = db.query(IdeaFormulario)
+
+        if idRegistroIdea:
+            query = query.filter(
+                IdeaFormulario.idRegistroIdea == idRegistroIdea
+            )
+        
+        if nombre:
+            query = query.filter(
+                IdeaFormulario.nombre == nombre
+            )
+
+        if nomina:
+            query = query.filter(
+                IdeaFormulario.nomina == nomina
+            )
+        
+        if telefono:
+            query = query.filter(
+                IdeaFormulario.telefono == telefono
+            )
+        
+        if unidadNegocio:
+            query = query.filter(
+                IdeaFormulario.unidadNegocio == unidadNegocio
+            )
+        
+        if unidadNegocio:
+            query = query.filter(
+                IdeaFormulario.unidadNegocio == unidadNegocio
+            )
+        
+        if zona:
+            query = query.filter(
+                IdeaFormulario.zona == zona
+            )
+        
+        if departamento:
+            query = query.filter(
+                IdeaFormulario.departamento == departamento
+            )
+        
+        if tituloIdea:
+            query = query.filter(
+                IdeaFormulario.tituloIdea == tituloIdea
+            )
+
+        if estado:
+            query = query.filter(
+                IdeaFormulario.estado == estado
+            )
+
+        if fecha:
+            query = query.filter(
+                cast(IdeaFormulario.fecha, Date) == fecha
+            )
+
+        return (
+            query
+            .order_by(IdeaFormulario.fecha.desc())
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )

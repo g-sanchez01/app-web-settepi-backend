@@ -40,6 +40,12 @@ def registrar_idea(
 )
 def obtener_mis_ideas(
     idRegistroIdea: int | None = None,
+    nombre: str | None = None,
+    nomina: str | None = None,
+    telefono: str | None = None,
+    unidadNegocio: str | None = None,
+    zona: str | None = None,
+    departamento: str | None = None,
     tituloIdea: str | None = None,
     estado: str | None = None,
     fecha: date | None = None,
@@ -49,8 +55,14 @@ def obtener_mis_ideas(
 
     return obtener_ideas(
         db=db,
-        nomina=str(user.numero_nomina),
+        user=user,
         idRegistroIdea=idRegistroIdea,
+        nombre=nombre,
+        nomina=nomina,
+        telefono=telefono,
+        unidadNegocio=unidadNegocio,
+        zona=zona,
+        departamento=departamento,
         tituloIdea=tituloIdea,
         estado=estado,
         fecha=fecha

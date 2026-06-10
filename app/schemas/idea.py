@@ -13,8 +13,19 @@ class IdeaCreate(BaseModel):
 # Este schema define cómo responderá el API.
 class IdeaResponse(BaseModel):
     idRegistroIdea: int
+
+    nombre: str | None = None
+    nomina: int
+
+    telefono: str | None = None
+
+    unidadNegocio: str | None = None
+    zona: str | None = None
+    departamento: str | None = None
+
     tituloIdea: str
     descripcionIdea: str
+
     estado: str
     fecha: datetime
 

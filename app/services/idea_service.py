@@ -70,15 +70,38 @@ def enviar_idea(db: Session, id_idea: int):
 
 def obtener_ideas(
     db: Session,
-    nomina: str,
-    idRegistroIdea: int | None = None,
+    user: Colaborador,
+    idRegistroIdea: str | None = None,
+    nombre: str | None = None,
+    nomina: str | None = None,
+    telefono: str | None = None,
+    unidadNegocio: str | None = None,
+    zona: str | None = None,
+    departamento: str | None = None,
     tituloIdea: str | None = None,
     estado: str | None = None,
     fecha: date | None = None
 ):
+    # Administrador: ve todas las ideas
+    if user.rol == "GESTOR":
+        return IdeaRepository.obtener_todas(
+            db=db,
+            idRegistroIdea=idRegistroIdea,
+            nombre=nombre,
+            nomina=nomina,
+            telefono=telefono,
+            unidadNegocio=unidadNegocio,
+            zona=zona,
+            departamento=departamento,
+            tituloIdea=tituloIdea,
+            estado="ENVIADA",
+            fecha=fecha
+        )
+    
+    # Usuario General
     return IdeaRepository.obtener_por_nomina(
         db=db,
-        nomina=nomina,
+        nomina=user.numero_nomina,
         idRegistroIdea=idRegistroIdea,
         tituloIdea=tituloIdea,
         estado=estado,
