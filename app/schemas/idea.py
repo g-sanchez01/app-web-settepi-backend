@@ -38,3 +38,8 @@ class IdeaUpdate(BaseModel):
     zona: str
     tituloIdea: str
     descripcionIdea: str
+
+# Actualizar estado de idea (GESTOR)
+class IdeaEstadoUpdate(BaseModel):
+    estado: str
+    

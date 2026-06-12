@@ -5,6 +5,7 @@ from datetime import date
 from app.models.idea_formulario import IdeaFormulario
 from app.models.colaborador import Colaborador
 from app.schemas.idea import IdeaCreate
+from app.constants.estados_idea import ESTADOS_GESTOR, ESTADOS_GENERAL
 from app.utils.datetime_utils import now_mexico
 
 from app.repositories.idea_repository import IdeaRepository
@@ -84,6 +85,8 @@ def obtener_ideas(
 ):
     # Administrador: ve todas las ideas
     if user.rol == "GESTOR":
+        estado_filtro = estado if estado else ESTADOS_GESTOR
+
         return IdeaRepository.obtener_todas(
             db=db,
             idRegistroIdea=idRegistroIdea,
@@ -94,16 +97,56 @@ def obtener_ideas(
             zona=zona,
             departamento=departamento,
             tituloIdea=tituloIdea,
-            estado="ENVIADA",
+            estado=estado_filtro,
             fecha=fecha
         )
     
+
+    
     # Usuario General
+    estado_filtro = estado if estado else ESTADOS_GENERAL
+    
     return IdeaRepository.obtener_por_nomina(
         db=db,
         nomina=user.numero_nomina,
         idRegistroIdea=idRegistroIdea,
         tituloIdea=tituloIdea,
-        estado=estado,
+        estado=ESTADOS_GENERAL,
         fecha=fecha
+    )
+
+def actualizar_estado_idea(
+        db: Session,
+        id_idea: int,
+        estado: str
+):
+    idea = IdeaRepository.obtener_por_id(
+        db,
+        id_idea
+    )
+
+    if not idea:
+        raise HTTPException(
+            status_code=404,
+            detail="Idea no encontrada"
+        )
+    
+    estado_validos = [
+        "PENDIENTE",
+        "APROBADA",
+        "RECHAZADA",
+        "EN PROCESO",
+        "FINALIZADA"
+    ]
+
+    if estado not in estado_validos:
+        raise HTTPException(
+            status_code=400,
+            detail="Estado no Valido"
+        )
+    
+    return IdeaRepository.actualizar_estado(
+        db,
+        idea,
+        estado
     )

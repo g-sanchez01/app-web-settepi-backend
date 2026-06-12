@@ -145,9 +145,15 @@ class IdeaRepository:
             )
 
         if estado:
-            query = query.filter(
-                IdeaFormulario.estado == estado
-            )
+
+            if isinstance(estado, list):
+                query = query.filter(
+                    IdeaFormulario.estado.in_(estado)
+                )
+            else:
+                query = query.filter(
+                    IdeaFormulario.estado == estado
+                )
 
         if fecha:
             query = query.filter(
@@ -161,3 +167,17 @@ class IdeaRepository:
             .limit(limit)
             .all()
         )
+    
+    @staticmethod
+    def actualizar_estado(
+        db: Session,
+        idea: IdeaFormulario,
+        estado: str
+    ):
+
+        idea.estado = estado
+
+        db.commit()
+        db.refresh(idea)
+
+        return idea

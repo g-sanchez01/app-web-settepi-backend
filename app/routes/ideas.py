@@ -4,12 +4,12 @@ from datetime import date
 
 from app.config.database import get_db
 
-from app.schemas.idea import IdeaCreate, IdeaResponse, IdeaUpdate
+from app.schemas.idea import IdeaCreate, IdeaResponse, IdeaUpdate, IdeaEstadoUpdate
 from app.repositories.idea_repository import IdeaRepository
 
 
 from app.models.colaborador import Colaborador
-from app.services.idea_service import crear_idea, editar_idea, obtener_ideas, enviar_idea as enviar_idea_service
+from app.services.idea_service import crear_idea, editar_idea, obtener_ideas, actualizar_estado_idea, enviar_idea as enviar_idea_service
 from app.core.security import get_current_user
 
 router = APIRouter(tags=["Ideas"])
@@ -67,6 +67,27 @@ def obtener_mis_ideas(
         estado=estado,
         fecha=fecha
     )
+
+# Cambiar estado de idea (GESTOR)
+@router.put("/{id_idea}/estado")
+def actualizar_estado_endpoint(
+    id_idea: int,
+    data: IdeaEstadoUpdate,
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+
+    idea = actualizar_estado_idea(
+        db=db,
+        id_idea=id_idea,
+        estado=data.estado
+    )
+
+    return {
+        "message": "Estado actualizado correctamente",
+        "idRegistroIdea": idea.idRegistroIdea,
+        "estado": idea.estado
+    }
 
 # Obtener id de la idea
 @router.get("/{id_idea}")
