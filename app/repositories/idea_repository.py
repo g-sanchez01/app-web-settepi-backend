@@ -38,9 +38,15 @@ class IdeaRepository:
             )
 
         if estado:
-            query = query.filter(
-                IdeaFormulario.estado == estado
-            )
+
+            if isinstance(estado, list):
+                query = query.filter(
+                    IdeaFormulario.estado.in_(estado)
+                )
+            else:
+                query = query.filter(
+                    IdeaFormulario.estado == estado
+                )
 
         if fecha:
             query = query.filter(
