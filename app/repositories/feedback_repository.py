@@ -159,3 +159,17 @@ class FeedbackRepository:
             .filter(FeedbackFormulario.idfeedback == id_feedback)
             .first()
         )
+    
+    @staticmethod
+    def actualizar_estado(
+        db: Session,
+        feedback: FeedbackFormulario,
+        estado: str
+    ):
+
+        feedback.estado = estado
+
+        db.commit()
+        db.refresh(feedback)
+
+        return feedback

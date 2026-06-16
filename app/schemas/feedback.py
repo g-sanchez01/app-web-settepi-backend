@@ -32,4 +32,7 @@ class FeedbackResponse(BaseModel):
     class Config:
         from_attributes = True
     
+# Actualizar estado de idea (GESTOR)
+class FeedbackEstadoUpdate(BaseModel):
+    estado: str
     

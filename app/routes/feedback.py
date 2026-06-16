@@ -5,11 +5,11 @@ from fastapi import HTTPException
 
 from app.config.database import get_db
 
-from app.schemas.feedback import CreateFeedback, FeedbackResponse
+from app.schemas.feedback import CreateFeedback, FeedbackResponse, FeedbackEstadoUpdate
 from app.repositories.feedback_repository import FeedbackRepository
 
 from app.models.colaborador import Colaborador
-from app.services.feedback_service import crear_feedback, obtener_feedbacks
+from app.services.feedback_service import crear_feedback, obtener_feedbacks, actualizar_estado_feedback
 from app.core.security import get_current_user
 
 router = APIRouter(tags=["Feedbacks"])
@@ -65,6 +65,27 @@ def obtener_mis_feedbacks(
         estado=estado,
         fecha=fecha
     )
+
+# Cambiar estado de feedback (GESTOR)
+@router.put("/{id_feedback}/estado")
+def actualizar_estado_endpoint(
+    id_feedback: int,
+    data: FeedbackEstadoUpdate,
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+
+    feedback = actualizar_estado_feedback(
+        db=db,
+        id_feedback=id_feedback,
+        estado=data.estado
+    )
+
+    return {
+        "message": "Estado actualizado correctamente",
+        "idfeedback": feedback.idfeedback,
+        "estado": feedback.estado
+    }
 
 # Obtener id del feedback
 @router.get("/{id_feedback}")

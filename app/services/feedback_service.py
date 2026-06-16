@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from datetime import date
+from fastapi import HTTPException
 from app.models.feedback_formulario import FeedbackFormulario
 from app.models.colaborador import Colaborador
 from app.constants.estados_feedback import ESTADOS_GESTOR, ESTADOS_GENERAL
@@ -46,7 +47,7 @@ def obtener_feedbacks(
     fecha: date | None = None,
 ):
     
-    # Administrador: ve todas las ideas
+    # Administrador: ve todas los feedbacks
     if user.rol == "GESTOR":
         estado_filtro = estado if estado else ESTADOS_GESTOR
 
@@ -75,4 +76,38 @@ def obtener_feedbacks(
         area=area,
         estado=ESTADOS_GENERAL,
         fecha=fecha
+    )
+
+def actualizar_estado_feedback(
+        db: Session,
+        id_feedback: int,
+        estado: str
+):
+    feedback = FeedbackRepository.obtener_por_id(
+        db,
+        id_feedback
+    )
+
+    if not feedback:
+        raise HTTPException(
+            status_code=404,
+            detail="Feedback no encontrado"
+        )
+    
+    estado_validos = [
+        "PENDIENTE",
+        "EN PROCESO",
+        "FINALIZADO"
+    ]
+
+    if estado not in estado_validos:
+        raise HTTPException(
+            status_code=400,
+            detail="Estado no Valido"
+        )
+    
+    return FeedbackRepository.actualizar_estado(
+        db,
+        feedback,
+        estado
     )
