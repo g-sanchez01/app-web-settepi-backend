@@ -18,7 +18,9 @@ class IdeaRepository:
         idRegistroIdea: str | None = None,
         tituloIdea: str | None = None,
         estado: str | None = None,
-        fecha: date | None = None
+        fecha: date | None = None,
+        offset: int = 0,
+        limit: int = 10
     ):
         query = (
             db.query(IdeaFormulario)
@@ -58,6 +60,8 @@ class IdeaRepository:
             .order_by(
                 IdeaFormulario.fecha.desc()
             )
+            .offset(offset)
+            .limit(limit)
             .all()
         )
     

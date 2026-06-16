@@ -45,6 +45,8 @@ def obtener_feedbacks(
     planta: str | None = None,
     estado: str | None = None,
     fecha: date | None = None,
+    offset: int = 0,
+    limit: int = 10
 ):
     
     # Administrador: ve todas los feedbacks
@@ -61,7 +63,9 @@ def obtener_feedbacks(
             area=area,
             planta=planta,
             estado=estado_filtro,
-            fecha=fecha
+            fecha=fecha,
+            offset=offset,
+            limit=limit
         )
     
 
@@ -74,8 +78,10 @@ def obtener_feedbacks(
         idfeedback=idfeedback,
         tipo=tipo,
         area=area,
-        estado=ESTADOS_GENERAL,
-        fecha=fecha
+        estado=estado_filtro,
+        fecha=fecha,
+        offset=offset,
+        limit=limit
     )
 
 def actualizar_estado_feedback(

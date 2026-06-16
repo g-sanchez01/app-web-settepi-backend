@@ -49,6 +49,8 @@ def obtener_mis_ideas(
     tituloIdea: str | None = None,
     estado: str | None = None,
     fecha: date | None = None,
+    offset: int = 0,
+    limit: int = 10,
     db: Session = Depends(get_db),
     user: Colaborador = Depends(get_current_user)
 ):
@@ -65,7 +67,9 @@ def obtener_mis_ideas(
         departamento=departamento,
         tituloIdea=tituloIdea,
         estado=estado,
-        fecha=fecha
+        fecha=fecha,
+        offset=offset,
+        limit=limit
     )
 
 # Cambiar estado de idea (GESTOR)

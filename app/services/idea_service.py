@@ -81,7 +81,9 @@ def obtener_ideas(
     departamento: str | None = None,
     tituloIdea: str | None = None,
     estado: str | None = None,
-    fecha: date | None = None
+    fecha: date | None = None,
+    offset: int = 0,
+    limit: int = 10
 ):
     # Administrador: ve todas las ideas
     if user.rol == "GESTOR":
@@ -98,7 +100,9 @@ def obtener_ideas(
             departamento=departamento,
             tituloIdea=tituloIdea,
             estado=estado_filtro,
-            fecha=fecha
+            fecha=fecha,
+            offset=offset,
+            limit=limit
         )
     
 
@@ -111,8 +115,10 @@ def obtener_ideas(
         nomina=user.numero_nomina,
         idRegistroIdea=idRegistroIdea,
         tituloIdea=tituloIdea,
-        estado=ESTADOS_GENERAL,
-        fecha=fecha
+        estado=estado_filtro,
+        fecha=fecha,
+        offset=offset,
+        limit=limit
     )
 
 def actualizar_estado_idea(

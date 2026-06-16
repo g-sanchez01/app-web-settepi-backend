@@ -20,7 +20,9 @@ class FeedbackRepository:
         idfeedback: int | None = None,
         tipo: str | None = None,
         estado: str | None = None,
-        fecha: date | None = None
+        fecha: date | None = None,
+        offset: int = 0,
+        limit: int = 10
     ):
         query = (
             db.query(FeedbackFormulario)
@@ -65,6 +67,8 @@ class FeedbackRepository:
             .order_by(
                 FeedbackFormulario.fecha.desc()
             )
+            .offset(offset)
+            .limit(limit)
             .all()
         )
     
