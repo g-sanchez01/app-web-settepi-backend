@@ -1,5 +1,5 @@
 from app.models.feedback_formulario import FeedbackFormulario
-from sqlalchemy import cast, Date
+from sqlalchemy import cast, Date, func
 from datetime import date
 
 class FeedbackRepository:
@@ -177,3 +177,33 @@ class FeedbackRepository:
         db.refresh(feedback)
 
         return feedback
+    
+    @staticmethod
+    def obtener_estadisticas(db: Session):
+        resultados = (
+            db.query(
+                FeedbackFormulario.estado,
+                func.count().label("cantidad")
+            )
+            .group_by(FeedbackFormulario.estado)
+            .all()
+        )
+
+        stats = {
+            "total": 0,
+            "pendiente": 0,
+            "en_proceso": 0,
+            "finalizada": 0
+        }
+
+        for estado, cantidad in resultados:
+            stats["total"] += cantidad
+
+            if estado == "PENDIENTE":
+                stats["pendiente"] = cantidad
+            elif estado == "EN PROCESO":
+                stats["en_proceso"] = cantidad
+            elif estado == "FINALIZADO":
+                stats["finalizada"] = cantidad
+
+        return stats

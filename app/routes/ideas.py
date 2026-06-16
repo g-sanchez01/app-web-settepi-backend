@@ -72,6 +72,12 @@ def obtener_mis_ideas(
         limit=limit
     )
 
+@router.get("/estadisticas")
+def obtener_estadisticas(
+    db: Session = Depends(get_db)
+):
+    return IdeaRepository.obtener_estadisticas(db)
+
 # Cambiar estado de idea (GESTOR)
 @router.put("/{id_idea}/estado")
 def actualizar_estado_endpoint(
@@ -143,3 +149,4 @@ def enviar_idea_endpoint(
         "message": "Idea enviada correctamente",
         "idRegistroIdea": idea.idRegistroIdea
     }
+

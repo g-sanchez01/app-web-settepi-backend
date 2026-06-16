@@ -1,5 +1,5 @@
 from app.models.idea_formulario import IdeaFormulario
-from sqlalchemy import cast, Date
+from sqlalchemy import cast, Date, func
 from datetime import date
 
 class IdeaRepository:
@@ -191,3 +191,35 @@ class IdeaRepository:
         db.refresh(idea)
 
         return idea
+    
+    @staticmethod
+    def obtener_estadisticas(db: Session):
+        resultados = (
+            db.query(
+                IdeaFormulario.estado,
+                func.count().label("cantidad")
+            )
+            .group_by(IdeaFormulario.estado)
+            .all()
+        )
+
+        stats = {
+            "total": 0,
+            "pendiente": 0,
+            "en_proceso": 0,
+            "finalizada": 0
+        }
+
+        for estado, cantidad in resultados:
+            stats["total"] += cantidad
+
+            if estado == "PENDIENTE":
+                stats["pendiente"] = cantidad
+            elif estado == "EN PROCESO":
+                stats["en_proceso"] = cantidad
+            elif estado == "APROBADA":
+                stats["finalizada"] = cantidad
+            elif estado == "RECHAZADA":
+                stats["finalizada"] = cantidad
+
+        return stats

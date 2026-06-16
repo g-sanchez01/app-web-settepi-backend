@@ -70,6 +70,12 @@ def obtener_mis_feedbacks(
         limit=limit
     )
 
+@router.get("/estadisticas")
+def obtener_estadisticas(
+    db: Session = Depends(get_db)
+):
+    return FeedbackRepository.obtener_estadisticas(db)
+
 # Cambiar estado de feedback (GESTOR)
 @router.put("/{id_feedback}/estado")
 def actualizar_estado_endpoint(
@@ -107,3 +113,4 @@ def obtener_feedback_por_id(
         )
 
     return feedback
+
