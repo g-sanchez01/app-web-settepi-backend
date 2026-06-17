@@ -37,8 +37,7 @@ def crear_feedback(data: CreateFeedback, user: Colaborador, db: Session):
 
     ActividadRepository.crear(
         db=db,
-        tipo="FEEDBACK",
-        descripcion=f"Envió un feedback de tipo {feedback.tipo}",
+        descripcion=f"Envió una situación / felicitación",
         usuario=feedback.nombre,
         estado=feedback.estado
     )
