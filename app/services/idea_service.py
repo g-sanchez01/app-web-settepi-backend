@@ -9,6 +9,7 @@ from app.constants.estados_idea import ESTADOS_GESTOR, ESTADOS_GENERAL
 from app.utils.datetime_utils import now_mexico
 
 from app.repositories.idea_repository import IdeaRepository
+from app.repositories.actividad_repository import ActividadRepository
 
 
 def crear_idea(data: IdeaCreate, user: Colaborador, db: Session):
@@ -63,11 +64,26 @@ def enviar_idea(db: Session, id_idea: int):
             status_code=400,
             detail="Solo se pueden enviar ideas en BORRADOR"
         )
+    
+    try:
+        idea_enviada = IdeaRepository.enviar_idea(
+            db,
+            idea
+        )
 
-    return IdeaRepository.enviar_idea(
-        db,
-        idea
-    )
+        ActividadRepository.crear(
+            db=db,
+            descripcion="Envió una nueva idea",
+            usuario=idea.nombre,   
+            estado=idea.estado
+        )
+
+        return idea_enviada
+    
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 def obtener_ideas(
     db: Session,

@@ -8,6 +8,7 @@ from app.schemas.feedback import CreateFeedback
 from app.utils.datetime_utils import now_mexico
 
 from app.repositories.feedback_repository import FeedbackRepository
+from app.repositories.actividad_repository import ActividadRepository
 
 # Crear Feedback
 def crear_feedback(data: CreateFeedback, user: Colaborador, db: Session):
@@ -29,7 +30,20 @@ def crear_feedback(data: CreateFeedback, user: Colaborador, db: Session):
         nomina = user.numero_nomina
     )
 
-    return FeedbackRepository.crear_feedback(db, nuevo_feedback)
+    feedback = FeedbackRepository.crear_feedback(
+        db,
+        nuevo_feedback
+    )
+
+    ActividadRepository.crear(
+        db=db,
+        tipo="FEEDBACK",
+        descripcion=f"Envió un feedback de tipo {feedback.tipo}",
+        usuario=feedback.nombre,
+        estado=feedback.estado
+    )
+
+    return feedback
 
 # Obtener feedbacks
 def obtener_feedbacks(

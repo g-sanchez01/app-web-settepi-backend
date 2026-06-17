@@ -13,6 +13,7 @@ from app.routes.auth import router as auth_router
 from app.routes.general import router as general_router
 from app.routes.ideas import router as ideas_router
 from app.routes.feedback import router as feedbacks_router
+from app.routes.actividades import router as actividades_router
 
 # middleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -76,6 +77,15 @@ app.include_router(
     feedbacks_router,
     prefix="/feedbacks",
     tags=["Feedbacks"]
+)
+
+# ================================
+# ROUTES ACTIVIDADES
+# ================================
+app.include_router(
+    actividades_router,
+    prefix="/actividades",
+    tags=["Actividades"]
 )
 
 
