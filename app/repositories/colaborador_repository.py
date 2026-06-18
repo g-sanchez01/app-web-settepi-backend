@@ -15,5 +15,7 @@ class ColaboradorRepository:
                 Colaborador.estado == "ACTIVO",
                 Colaborador.puesto != "GERENTE"
             )
+            .order_by(Colaborador.fecha_creacion)  # o nombre, o fecha_creacion
+            .limit(5)
             .all()
         )
