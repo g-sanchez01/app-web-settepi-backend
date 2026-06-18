@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.models.colaborador import Colaborador
 
 class ColaboradorRepository:
@@ -39,4 +40,12 @@ class ColaboradorRepository:
             .offset(offset)
             .limit(limit)
             .all()
+        )
+    
+    @staticmethod
+    def contar_integrantes(db, departamento: str):
+        return (
+            db.query(func.count(Colaborador.numero_nomina))
+            .filter(Colaborador.departamento == departamento)
+            .scalar()
         )
