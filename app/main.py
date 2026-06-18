@@ -11,6 +11,7 @@ from app.models.colaborador import Colaborador
 # routers
 from app.routes.auth import router as auth_router
 from app.routes.general import router as general_router
+from app.routes.lider import router as lider_router
 from app.routes.ideas import router as ideas_router
 from app.routes.feedback import router as feedbacks_router
 from app.routes.actividades import router as actividades_router
@@ -59,6 +60,13 @@ app.include_router(
 app.include_router(
     general_router,
     tags=["General"]
+)
+
+# ================================
+# ROUTES LIDER
+# ================================
+app.include_router(
+    lider_router
 )
 
 # ================================
