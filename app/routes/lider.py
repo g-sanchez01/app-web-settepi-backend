@@ -12,11 +12,19 @@ router = APIRouter(
 
 @router.get("/equipo")
 def obtener_equipo(
+    numero_nomina: str | None = None,
+    puesto: str | None = None,
+    offset: int = 0,
+    limit: int = 5,
     db: Session = Depends(get_db),
     user: Colaborador = Depends(get_current_user)
 ):
 
     return obtener_equipo_departamento(
         db=db,
-        user=user
+        user=user,
+        numero_nomina=numero_nomina,
+        puesto=puesto,
+        offset=offset,
+        limit=limit
     )
