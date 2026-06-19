@@ -109,3 +109,13 @@ def aprobar_solicitud(db: Session, id_solicitud: int, user: Colaborador):
         "message": "Empleado asignado correctamente",
         "data": resultado
     }
+
+def obtener_actual_mes(
+    db: Session,
+    departamento: str
+):
+    return ColaboradorMesRepository.obtener_actual(
+        db,
+        departamento
+    )
+    

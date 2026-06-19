@@ -10,8 +10,7 @@ from app.models.colaborador import Colaborador
 
 from app.services.colaborador_service import obtener_equipo_departamento
 from app.services.colaborador_mes_service import (
-    crear_solicitud,
-    aprobar_solicitud
+    crear_solicitud, obtener_actual_mes
 )
 
 from app.repositories.colaborador_repository import ColaboradorRepository
@@ -76,5 +75,23 @@ def crear_solicitud_colaborador_mes(
         "message": "Solicitud creada correctamente",
         "data": resultado
     }
+
+@router.get("/colaborador-mes/actual")
+def obtener_colaborador_mes_actual(
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+    
+):
+    resultado = obtener_actual_mes(
+        db,
+        user.departamento
+    )
+
+    if not resultado:
+        return {
+            "message": "No existe colaborador del mes asignado para este departamento"
+        }
+
+    return resultado
 
 

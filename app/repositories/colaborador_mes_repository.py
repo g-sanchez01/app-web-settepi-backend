@@ -77,3 +77,46 @@ class ColaboradorMesRepository:
         except Exception as e:
             db.rollback()
             raise e
+        
+    @staticmethod
+    def obtener_actual(
+        db: Session,
+        departamento: str
+    ):
+        hoy = datetime.now()
+
+        solicitud = (
+            db.query(ColaboradorMes)
+            .filter(
+                ColaboradorMes.departamento == departamento,
+                ColaboradorMes.mes == hoy.month,
+                ColaboradorMes.anio == hoy.year,
+                ColaboradorMes.estado == "ACEPTADO"
+            )
+            .first()
+        )
+
+        if not solicitud:
+            return None
+
+        colaborador = (
+            db.query(Colaborador)
+            .filter(
+                Colaborador.numero_nomina == solicitud.numero_nomina
+            )
+            .first()
+        )
+
+        return {
+            "id": solicitud.id,
+            "numero_nomina": solicitud.numero_nomina,
+            "nombre": colaborador.nombre if colaborador else None,
+            "puesto_real": colaborador.puesto if colaborador else None,
+            "departamento": solicitud.departamento,
+            "motivo_solicitud": solicitud.motivo_solicitud,
+            "mes": solicitud.mes,
+            "anio": solicitud.anio,
+            "estado": solicitud.estado,
+            "fecha_solicitud": solicitud.fecha_solicitud,
+            "fecha_asignacion": solicitud.fecha_asignacion
+        }
