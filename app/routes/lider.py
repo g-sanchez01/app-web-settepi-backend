@@ -1,14 +1,20 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from datetime import datetime
+
 from app.config.database import get_db
 from app.core.security import get_current_user
+
+from app.schemas.colaborador_mes import ColaboradorMesCreate
+
 from app.models.colaborador import Colaborador
-from app.models.colaborador_mes import ColaboradorMes
+
 from app.services.colaborador_service import obtener_equipo_departamento
-from app.services.colaborador_mes_service import obtener_colaborador_mes
+from app.services.colaborador_mes_service import (
+    crear_solicitud,
+    aprobar_solicitud
+)
+
 from app.repositories.colaborador_repository import ColaboradorRepository
-from app.repositories.colaborador_mes_repository import ColaboradorMesRepository
 
 router = APIRouter(
     prefix="/lider",
@@ -51,45 +57,24 @@ def obtener_total_equipo(
     return {"total": total}
 
 # ================================
-# COLABORADOR DEL MES
+# COLABORADOR DEL MES - SOLICITUD
 # ================================
-
-@router.post("/colaborador-mes/asignar")
-def asignar_colaborador_mes(
-    numero_nomina: int,
+@router.post("/colaborador-mes")
+def crear_solicitud_colaborador_mes(
+    data: ColaboradorMesCreate,   
     db: Session = Depends(get_db),
     user: Colaborador = Depends(get_current_user)
 ):
 
-    resultado = ColaboradorMesRepository.asignar(
+    resultado = crear_solicitud(
         db=db,
-        numero_nomina=numero_nomina,
-        departamento=user.departamento
+        data=data,
+        user=user
     )
 
-    if not resultado:
-        return {
-            "message": "Ya existe un colaborador del mes para este departamento"
-        }
-
     return {
-        "message": "Colaborador del mes asignado correctamente",
+        "message": "Solicitud creada correctamente",
         "data": resultado
     }
 
 
-@router.get("/colaborador-mes")
-def obtener_colaborador_mes_endpoint(
-    db: Session = Depends(get_db),
-    user: Colaborador = Depends(get_current_user)
-):
-
-    result = obtener_colaborador_mes(
-        db=db,
-        departamento=user.departamento
-    )
-
-    if not result:
-        return {"message": "No hay colaborador del mes asignado"}
-
-    return result

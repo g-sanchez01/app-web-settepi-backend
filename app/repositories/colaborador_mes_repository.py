@@ -1,34 +1,79 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from datetime import datetime
+
 from app.models.colaborador_mes import ColaboradorMes
+from app.models.colaborador import Colaborador
+
 
 class ColaboradorMesRepository:
 
     @staticmethod
-    def asignar(db: Session, numero_nomina: int, departamento: str):
+    def crear_solicitud(db: Session, data: ColaboradorMes):
 
-        now = datetime.now()
+        try:
+            db.add(data)
+            db.commit()
+            db.refresh(data)
+            return data
 
-       # validar si ya existe
-        existente = db.query(ColaboradorMes).filter(
-            ColaboradorMes.departamento == departamento,
-            ColaboradorMes.mes == now.month,
-            ColaboradorMes.anio == now.year
-        ).first() 
+        except Exception as e:
+            db.rollback()
+            raise e
+        
+    # ==============================
+    # APROBAR Y ASIGNAR
+    # ==============================
+    @staticmethod
+    def aprobar_solicitud(db: Session, id_solicitud: int):
 
-        if existente:
+        solicitud = db.query(ColaboradorMes).filter(
+            ColaboradorMes.id == id_solicitud
+        ).first()
+
+        if not solicitud:
             return None
         
-        new = ColaboradorMes(
-            numero_nomina=numero_nomina,
-            departamento=departamento,
-            mes=now.month,
-            anio=now.year
-        )
+        # ==============================
+        # VALIDACIÓN: YA EXISTE APROBADO
+        # ==============================
+        existing = db.query(ColaboradorMes).filter(
+            ColaboradorMes.departamento == solicitud.departamento,
+            ColaboradorMes.mes == solicitud.mes,
+            ColaboradorMes.anio == solicitud.anio,
+            ColaboradorMes.estado == "ACEPTADO"
+        ).first()
 
-        db.add(new)
-        db.commit()
-        db.refresh(new)
+        if existing:
+            raise Exception("Ya existe un colaborador del mes aprobado")
 
-        return new
+        # ==============================
+        # ACTUALIZAR ESTADO
+        # ==============================
+        solicitud.estado = "ACEPTADO"
+        solicitud.fecha_asignacion = datetime.now()
+
+        try:
+            db.commit()
+            db.refresh(solicitud)
+
+            colaborador = db.query(Colaborador).filter(
+                Colaborador.numero_nomina == solicitud.numero_nomina
+            ).first()
+            
+            return {
+                "id": solicitud.id,
+                "numero_nomina": solicitud.numero_nomina,
+                "nombre": colaborador.nombre if colaborador else None,
+                "puesto_real": colaborador.puesto if colaborador else None,
+                "departamento": solicitud.departamento,
+                "motivo_solicitud": solicitud.motivo_solicitud,
+                "mes": solicitud.mes,
+                "anio": solicitud.anio,
+                "estado": solicitud.estado,
+                "fecha_solicitud": solicitud.fecha_solicitud,
+                "fecha_asignacion": solicitud.fecha_asignacion
+            }
+
+        except Exception as e:
+            db.rollback()
+            raise e
