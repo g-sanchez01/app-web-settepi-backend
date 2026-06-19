@@ -76,6 +76,9 @@ def crear_solicitud_colaborador_mes(
         "data": resultado
     }
 
+# ================================
+# COLABORADOR DEL MES - OBTENER ACTUAL
+# ================================
 @router.get("/colaborador-mes/actual")
 def obtener_colaborador_mes_actual(
     db: Session = Depends(get_db),
@@ -93,5 +96,29 @@ def obtener_colaborador_mes_actual(
         }
 
     return resultado
+
+
+# ================================
+# COLABORADOR DEL MES - OBTENER POR NOMINA
+# ================================
+@router.get("/colaborador/{numero_nomina}")
+def obtener_colaborador_por_nomina(
+    numero_nomina: int,
+    db: Session = Depends(get_db)
+):
+    colaborador = db.query(Colaborador).filter(
+        Colaborador.numero_nomina == numero_nomina
+    ).first()
+
+    if not colaborador:
+        return {
+            "message": "Colaborador no encontrado"
+        }
+
+    return {
+        "numero_nomina": colaborador.numero_nomina,
+        "nombre": colaborador.nombre,
+        "puesto": colaborador.puesto
+    }
 
 

@@ -15,19 +15,26 @@ def crear_solicitud(db: Session, data, user):
     if not data.numero_nomina:
         raise HTTPException(400, "Número de nómina requerido")
 
-    if not data.departamento:
-        raise HTTPException(400, "Departamento requerido")
-
-    if not data.puesto:
-        raise HTTPException(400, "Puesto requerido")
-
     if not data.motivo_solicitud:
         raise HTTPException(400, "El motivo de la solicitud es obligatorio")
+    
+    # ==============================
+    # 2. OBTENER COLABORADOR
+    # ==============================
+    colaborador = db.query(Colaborador).filter(
+        Colaborador.numero_nomina == data.numero_nomina
+    ).first()
+
+    if not colaborador:
+        raise HTTPException(
+            status_code=404,
+            detail="Colaborador no encontrado"
+        )
 
     now = datetime.now()
 
     # ==============================
-    # 2. VALIDACIÓN 1: DUPLICADO MES + AÑO
+    # 3. VALIDACIÓN 1: DUPLICADO MES + AÑO
     # ==============================
     duplicado_mes = db.query(ColaboradorMes).filter(
         ColaboradorMes.numero_nomina == data.numero_nomina,
@@ -42,7 +49,7 @@ def crear_solicitud(db: Session, data, user):
         )
 
     # ==============================
-    # 3. VALIDACIÓN 2: SOLICITUD PENDIENTE
+    # 4. VALIDACIÓN : SOLICITUD PENDIENTE
     # ==============================
     solicitud_pendiente = db.query(ColaboradorMes).filter(
         ColaboradorMes.numero_nomina == data.numero_nomina,
@@ -59,9 +66,9 @@ def crear_solicitud(db: Session, data, user):
     # 4. CONSTRUCCIÓN DEL MODELO
     # ==============================
     nueva_solicitud = ColaboradorMes(
-        numero_nomina=data.numero_nomina,
-        departamento=data.departamento,
-        puesto=data.puesto,
+        numero_nomina=colaborador.numero_nomina,
+        departamento=colaborador.departamento,
+        puesto=colaborador.puesto,
         motivo_solicitud=data.motivo_solicitud,
 
         mes=now.month,
