@@ -9,6 +9,8 @@ from app.repositories.colaborador_mes_repository import ColaboradorMesRepository
 
 def crear_solicitud(db: Session, data, user):
 
+    now = datetime.now()
+
     # ==============================
     # 1. VALIDACIONES BÁSICAS
     # ==============================
@@ -78,8 +80,6 @@ def crear_solicitud(db: Session, data, user):
                 "para este departamento en el mes actual"
             )
         )
-
-    now = datetime.now()
 
     # ==============================
     # 6. CONSTRUCCIÓN DEL MODELO

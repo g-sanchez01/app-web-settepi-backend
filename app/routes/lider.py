@@ -14,6 +14,7 @@ from app.services.colaborador_mes_service import (
 )
 
 from app.repositories.colaborador_repository import ColaboradorRepository
+from app.repositories.colaborador_mes_repository import ColaboradorMesRepository
 
 router = APIRouter(
     prefix="/lider",
@@ -119,6 +120,24 @@ def obtener_colaborador_por_nomina(
         "numero_nomina": colaborador.numero_nomina,
         "nombre": colaborador.nombre,
         "puesto": colaborador.puesto
+    }
+
+
+# ================================
+# COLABORADOR DEL MES - VALIDACION DE SOLICITUD PENDIENTE
+# ================================
+@router.get("/colaborador-mes/solicitud-activa")
+def obtener_solicitud_activa(
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+    existe = ColaboradorMesRepository.solicitud_activa_departamento(
+        db,
+        user.departamento
+    )
+
+    return {
+        "activa": existe
     }
 
 
