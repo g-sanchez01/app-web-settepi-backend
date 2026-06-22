@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
+from fastapi import HTTPException
 
 from app.models.colaborador_mes import ColaboradorMes
 from app.models.colaborador import Colaborador
@@ -9,6 +10,19 @@ class ColaboradorMesRepository:
 
     @staticmethod
     def crear_solicitud(db: Session, data: ColaboradorMes):
+
+        ya_existe = ColaboradorMesRepository.existe_asignacion_mes(
+            db,
+            data.departamento,
+            data.mes,
+            data.anio
+        )
+
+        if ya_existe:
+            raise HTTPException(
+                status_code=400,
+                detail="Ya existe un colaborador del mes para este periodo"
+            )
 
         try:
             db.add(data)
@@ -32,19 +46,19 @@ class ColaboradorMesRepository:
 
         if not solicitud:
             return None
-        
-        # ==============================
-        # VALIDACIÓN: YA EXISTE APROBADO
-        # ==============================
-        existing = db.query(ColaboradorMes).filter(
-            ColaboradorMes.departamento == solicitud.departamento,
-            ColaboradorMes.mes == solicitud.mes,
-            ColaboradorMes.anio == solicitud.anio,
-            ColaboradorMes.estado == "ACEPTADO"
-        ).first()
 
-        if existing:
-            raise Exception("Ya existe un colaborador del mes aprobado")
+        # ==============================
+        # VALIDACIÓN CENTRALIZADA
+        # ==============================
+        ya_existe = ColaboradorMesRepository.existe_asignacion_mes(
+            db,
+            solicitud.departamento,
+            solicitud.mes,
+            solicitud.anio
+        )
+
+        if ya_existe:
+            raise Exception("Ya existe un colaborador del mes para este periodo")
 
         # ==============================
         # ACTUALIZAR ESTADO
@@ -59,7 +73,7 @@ class ColaboradorMesRepository:
             colaborador = db.query(Colaborador).filter(
                 Colaborador.numero_nomina == solicitud.numero_nomina
             ).first()
-            
+
             return {
                 "id": solicitud.id,
                 "numero_nomina": solicitud.numero_nomina,
@@ -139,6 +153,15 @@ class ColaboradorMesRepository:
             .first()
             is not None
         )
+    
+    @staticmethod
+    def existe_asignacion_mes(db: Session, departamento: str, mes: int, anio: int):
+        return db.query(ColaboradorMes).filter(
+            ColaboradorMes.departamento == departamento,
+            ColaboradorMes.mes == mes,
+            ColaboradorMes.anio == anio,
+            ColaboradorMes.estado == "ACEPTADO"
+        ).first() is not None
     
     @staticmethod
     def obtener_historial(
