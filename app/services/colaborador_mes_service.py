@@ -30,11 +30,9 @@ def crear_solicitud(db: Session, data, user):
             status_code=404,
             detail="Colaborador no encontrado"
         )
-
-    now = datetime.now()
-
+    
     # ==============================
-    # 3. VALIDACIÓN 1: DUPLICADO MES + AÑO
+    # 3. VALIDACIÓN: DUPLICADO MES + AÑO
     # ==============================
     duplicado_mes = db.query(ColaboradorMes).filter(
         ColaboradorMes.numero_nomina == data.numero_nomina,
@@ -47,7 +45,7 @@ def crear_solicitud(db: Session, data, user):
             status_code=400,
             detail="Este colaborador ya fue registrado en este mes"
         )
-
+    
     # ==============================
     # 4. VALIDACIÓN : SOLICITUD PENDIENTE
     # ==============================
@@ -61,9 +59,30 @@ def crear_solicitud(db: Session, data, user):
             status_code=400,
             detail="Ya existe una solicitud pendiente para este colaborador"
         )
+    
+    # ==============================
+    # 5. VALIDACIÓN: DEPARTAMENTO YA TIENE UNA SOLICITUD ACTIVA
+    # ==============================
+    solicitud_activa = (
+        ColaboradorMesRepository.solicitud_activa_departamento(
+            db,
+            colaborador.departamento
+        )
+    )
+
+    if solicitud_activa:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Ya existe una solicitud pendiente o aprobada "
+                "para este departamento en el mes actual"
+            )
+        )
+
+    now = datetime.now()
 
     # ==============================
-    # 4. CONSTRUCCIÓN DEL MODELO
+    # 6. CONSTRUCCIÓN DEL MODELO
     # ==============================
     nueva_solicitud = ColaboradorMes(
         numero_nomina=colaborador.numero_nomina,
@@ -79,7 +98,7 @@ def crear_solicitud(db: Session, data, user):
     )
 
     # ==============================
-    # 5. GUARDADO EN REPOSITORY
+    # 7. GUARDADO EN REPOSITORY
     # ==============================
     try:
         return ColaboradorMesRepository.crear_solicitud(

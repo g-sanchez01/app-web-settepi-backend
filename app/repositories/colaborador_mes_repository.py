@@ -120,3 +120,22 @@ class ColaboradorMesRepository:
             "fecha_solicitud": solicitud.fecha_solicitud,
             "fecha_asignacion": solicitud.fecha_asignacion
         }
+    
+    @staticmethod
+    def solicitud_activa_departamento(
+        db: Session,
+        departamento: str
+    ):
+        hoy = datetime.now()
+
+        return (
+            db.query(ColaboradorMes)
+            .filter(
+                ColaboradorMes.departamento == departamento,
+                ColaboradorMes.estado.in_(["PENDIENTE", "APROBADA"]),
+                ColaboradorMes.mes == hoy.month,
+                ColaboradorMes.anio == hoy.year
+            )
+            .first()
+            is not None
+        )
