@@ -144,4 +144,13 @@ def obtener_actual_mes(
         db,
         departamento
     )
+
+def obtener_historial_colaborador_mes(
+    db: Session,
+    user: Colaborador
+):
+    return ColaboradorMesRepository.obtener_historial(
+        db=db,
+        departamento=user.departamento
+    )
     

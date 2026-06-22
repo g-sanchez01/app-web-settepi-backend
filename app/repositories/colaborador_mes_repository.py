@@ -132,10 +132,50 @@ class ColaboradorMesRepository:
             db.query(ColaboradorMes)
             .filter(
                 ColaboradorMes.departamento == departamento,
-                ColaboradorMes.estado.in_(["PENDIENTE", "APROBADA"]),
+                ColaboradorMes.estado.in_(["PENDIENTE", "ACEPTADO"]),
                 ColaboradorMes.mes == hoy.month,
                 ColaboradorMes.anio == hoy.year
             )
             .first()
             is not None
         )
+    
+    @staticmethod
+    def obtener_historial(
+        db: Session,
+        departamento: str
+    ):
+        resultados = (
+            db.query(
+                ColaboradorMes.numero_nomina,
+                Colaborador.nombre,
+                ColaboradorMes.departamento,
+                ColaboradorMes.puesto,
+                ColaboradorMes.mes,
+                ColaboradorMes.anio
+            )
+            .join(
+                Colaborador,
+                Colaborador.numero_nomina == ColaboradorMes.numero_nomina
+            )
+            .filter(
+                ColaboradorMes.departamento == departamento,
+                ColaboradorMes.estado == "ACEPTADO"
+            )
+            .order_by(
+                ColaboradorMes.anio.desc(),
+                ColaboradorMes.mes.desc()
+            )
+            .all()
+        )
+        return [
+            {
+                "numero_nomina": item.numero_nomina,
+                "nombre": item.nombre,
+                "departamento": item.departamento,
+                "puesto": item.puesto,
+                "mes": item.mes,
+                "anio": item.anio
+            }
+            for item in resultados
+        ]
