@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from datetime import datetime
 from sqlalchemy import func
 from app.models.colaborador import Colaborador
 from app.models.colaborador_mes import ColaboradorMes
@@ -15,10 +16,16 @@ class ColaboradorRepository:
         limit: int = 5
 
     ):
+        hoy = datetime.now()
+
         ultima_solicitud = (
             db.query(
                 ColaboradorMes.numero_nomina,
                 func.max(ColaboradorMes.id).label("ultimo_id")
+            )
+            .filter(
+                ColaboradorMes.mes == hoy.month,
+                ColaboradorMes.anio == hoy.year
             )
             .group_by(ColaboradorMes.numero_nomina)
             .subquery()
@@ -69,7 +76,7 @@ class ColaboradorRepository:
                 "nombre": colaborador.nombre,
                 "puesto": colaborador.puesto,
                 "departamento": colaborador.departamento,
-                "estado_solicitud": estado or "SIN SOLICITUD"
+                "estado_solicitud": estado if estado else "SIN SOLICITUD"
             }
             
             for colaborador, estado in resultados
