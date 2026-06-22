@@ -40,7 +40,8 @@ class ColaboradorRepository:
             .filter(
                 Colaborador.departamento == departamento,
                 Colaborador.estado == "ACTIVO",
-                Colaborador.puesto != "GERENTE"
+                Colaborador.puesto != "GERENTE",
+                Colaborador.puesto != "GERENTE REGIONAL"
             )
         )
 

@@ -102,7 +102,7 @@ def obtener_ideas(
     limit: int = 10
 ):
     # Administrador: ve todas las ideas
-    if user.rol == "GESTOR":
+    if user.rol == "GESTOR" or user.rol == "ADMIN":
         estado_filtro = estado if estado else ESTADOS_GESTOR
 
         return IdeaRepository.obtener_todas(

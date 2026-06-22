@@ -10,7 +10,7 @@ from app.models.colaborador import Colaborador
 
 from app.services.colaborador_service import obtener_equipo_departamento
 from app.services.colaborador_mes_service import (
-    aprobar_solicitud
+    aprobar_solicitud, obtener_historial_colaborador_mes
 )
 
 from app.repositories.colaborador_repository import ColaboradorRepository
@@ -69,6 +69,20 @@ def aprobar_colaborador_mes(
     return aprobar_solicitud(
         db=db,
         id_solicitud=id_solicitud,
+        user=user
+    )
+
+
+# ================================
+# COLABORADOR DEL MES - HISTORIAL
+# ================================
+@router.get("/colaborador-mes/historial")
+def obtener_historial(
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+    return obtener_historial_colaborador_mes(
+        db=db,
         user=user
     )
 

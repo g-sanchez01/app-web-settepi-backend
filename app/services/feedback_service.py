@@ -63,7 +63,7 @@ def obtener_feedbacks(
 ):
     
     # Administrador: ve todas los feedbacks
-    if user.rol == "GESTOR":
+    if user.rol == "GESTOR" or user.rol == "ADMIN":
         estado_filtro = estado if estado else ESTADOS_GESTOR
 
         return FeedbackRepository.obtener_todas(
