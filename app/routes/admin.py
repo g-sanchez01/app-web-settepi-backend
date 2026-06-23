@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from datetime import date
 
 from app.config.database import get_db
 from app.core.security import get_current_user
@@ -10,7 +11,7 @@ from app.models.colaborador import Colaborador
 
 from app.services.colaborador_service import obtener_equipo_departamento
 from app.services.colaborador_mes_service import (
-    aprobar_solicitud, obtener_historial_colaborador_mes
+    aprobar_solicitud, obtener_historial_colaborador_mes, obtener_historial_admin
 )
 
 from app.repositories.colaborador_repository import ColaboradorRepository
@@ -84,6 +85,32 @@ def obtener_historial(
     return obtener_historial_colaborador_mes(
         db=db,
         user=user
+    )
+
+@router.get("/colaborador-mes/historial-admin")
+def obtener_historial_admin_colaborador_mes(
+    id: int | None = None,
+    numero_nomina: str | None = None,
+    nombre: str | None = None,
+    departamento: str | None = None,
+    fecha_solicitud: date | None = None,
+    estado: str | None = None,
+    offset: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+    return obtener_historial_admin(
+        db=db,
+        user=user,
+        id=id,
+        numero_nomina=numero_nomina,
+        nombre=nombre,
+        departamento=departamento,
+        fecha_solicitud=fecha_solicitud,
+        estado=estado,
+        offset=offset,
+        limit=limit
     )
 
 

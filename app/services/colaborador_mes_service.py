@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from datetime import datetime
+from datetime import datetime, date
 
 from app.models.colaborador_mes import ColaboradorMes
 from app.models.colaborador import Colaborador
@@ -152,5 +152,36 @@ def obtener_historial_colaborador_mes(
     return ColaboradorMesRepository.obtener_historial(
         db=db,
         departamento=user.departamento
+    )
+
+def obtener_historial_admin(
+    db: Session,
+    user: Colaborador,
+    id: int | None = None,
+    numero_nomina: str | None = None,
+    nombre: str | None = None,
+    departamento: str | None = None,
+    fecha_solicitud: date | None = None,
+    estado: str | None = None,
+    offset: int = 0,
+    limit: int = 10
+):
+
+    if user.rol != "ADMIN":
+        raise HTTPException(
+            status_code=403,
+            detail="No tienes permisos para ver esta información"
+        )
+
+    return ColaboradorMesRepository.obtener_historial_admin(
+        db=db,
+        id=id,
+        numero_nomina=numero_nomina,
+        nombre=nombre,
+        departamento=departamento,
+        fecha_solicitud=fecha_solicitud,
+        estado=estado,
+        offset=offset,
+        limit=limit
     )
     

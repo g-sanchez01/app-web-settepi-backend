@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from datetime import datetime
+from sqlalchemy import func
+from datetime import datetime, date
 from fastapi import HTTPException
 
 from app.models.colaborador_mes import ColaboradorMes
@@ -202,3 +203,86 @@ class ColaboradorMesRepository:
             }
             for item in resultados
         ]
+    
+    # ==============================
+    # HISTORIAL ADMIN 
+    # ==============================
+    @staticmethod
+    def obtener_historial_admin(
+        db: Session,
+        id: int | None = None,
+        numero_nomina: str | None = None,
+        nombre: str | None = None,
+        departamento: str | None = None,
+        fecha_solicitud: date | None = None,
+        estado: str | None = None,
+        offset: int = 0,
+        limit: int = 10
+    ):
+
+        query = (
+            db.query(
+                ColaboradorMes.id,
+                ColaboradorMes.numero_nomina,
+                Colaborador.nombre,
+                ColaboradorMes.departamento,
+                ColaboradorMes.puesto,
+                ColaboradorMes.mes,
+                ColaboradorMes.anio,
+                ColaboradorMes.fecha_solicitud,
+                ColaboradorMes.estado
+            )
+            .join(
+                Colaborador,
+                Colaborador.numero_nomina == ColaboradorMes.numero_nomina
+            )
+        )
+
+        if id:
+            query = query.filter(ColaboradorMes.id == id)
+
+        if numero_nomina:
+            query = query.filter(ColaboradorMes.numero_nomina == numero_nomina)
+
+        if nombre:
+            query = query.filter(Colaborador.nombre == nombre)
+
+        if departamento:
+            query = query.filter(ColaboradorMes.departamento == departamento)
+
+        if fecha_solicitud:
+            query = query.filter(func.date(ColaboradorMes.fecha_solicitud) == fecha_solicitud)
+
+        if estado:
+            query = query.filter(ColaboradorMes.estado == estado)
+
+        total = query.count()
+
+        resultados = (
+            query
+            .order_by(
+                ColaboradorMes.anio.desc(),
+                ColaboradorMes.mes.desc()
+            )
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+
+        return {
+            "total": total,
+            "data": [
+                {
+                    "id": item.id,
+                    "numero_nomina": item.numero_nomina,
+                    "nombre": item.nombre,
+                    "departamento": item.departamento,
+                    "puesto": item.puesto,
+                    "mes": item.mes,
+                    "anio": item.anio,
+                    "fecha_solicitud": item.fecha_solicitud,
+                    "estado": item.estado
+                }
+                for item in resultados
+            ]
+        }
