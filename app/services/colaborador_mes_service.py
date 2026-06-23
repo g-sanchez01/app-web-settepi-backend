@@ -184,4 +184,6 @@ def obtener_historial_admin(
         offset=offset,
         limit=limit
     )
-    
+
+def contar_asignados(db: Session):
+    return ColaboradorMesRepository.contar_asignados(db)

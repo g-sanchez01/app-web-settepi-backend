@@ -11,7 +11,7 @@ from app.models.colaborador import Colaborador
 
 from app.services.colaborador_service import obtener_equipo_departamento
 from app.services.colaborador_mes_service import (
-    aprobar_solicitud, obtener_historial_colaborador_mes, obtener_historial_admin
+    aprobar_solicitud, obtener_historial_colaborador_mes, obtener_historial_admin, contar_asignados
 )
 
 from app.repositories.colaborador_repository import ColaboradorRepository
@@ -112,5 +112,14 @@ def obtener_historial_admin_colaborador_mes(
         offset=offset,
         limit=limit
     )
+
+@router.get("/colaborador-mes/asignados/total")
+def total_asignados(
+    db: Session = Depends(get_db),
+):
+
+    return {
+        "total": contar_asignados(db)
+    }
 
 

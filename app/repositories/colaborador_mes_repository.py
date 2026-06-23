@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, cast, Date
 from datetime import datetime, date
 from fastapi import HTTPException
 
@@ -251,7 +251,9 @@ class ColaboradorMesRepository:
             query = query.filter(ColaboradorMes.departamento == departamento)
 
         if fecha_solicitud:
-            query = query.filter(func.date(ColaboradorMes.fecha_solicitud) == fecha_solicitud)
+            query = query.filter(
+                cast(ColaboradorMes.fecha_solicitud, Date) == fecha_solicitud
+            )
 
         if estado:
             query = query.filter(ColaboradorMes.estado == estado)
@@ -286,3 +288,12 @@ class ColaboradorMesRepository:
                 for item in resultados
             ]
         }
+    
+    @staticmethod
+    def contar_asignados(db: Session):
+
+        return (
+            db.query(ColaboradorMes)
+            .filter(ColaboradorMes.estado == "ACEPTADO")
+            .count()
+        )
