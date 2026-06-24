@@ -136,6 +136,28 @@ def aprobar_solicitud(db: Session, id_solicitud: int, user: Colaborador):
         "data": resultado
     }
 
+def rechazar_solicitud(db: Session, id_solicitud: int, user: Colaborador):
+
+    # VALIDACIÓN DE ROL
+    if user.rol != "ADMIN":
+        raise HTTPException(
+            status_code=403,
+            detail="No tienes permisos para aprobar esta solicitud"
+        )
+
+    resultado = ColaboradorMesRepository.rechazar_solicitud(db, id_solicitud)
+
+    if not resultado:
+        raise HTTPException(
+            status_code=404,
+            detail="Solicitud no encontrada"
+        )
+
+    return {
+        "message": "Empleado asignado correctamente",
+        "data": resultado
+    }
+
 def obtener_actual_mes(
     db: Session,
     departamento: str

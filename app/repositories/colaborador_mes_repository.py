@@ -47,6 +47,10 @@ class ColaboradorMesRepository:
 
         if not solicitud:
             return None
+        
+        # Solo las solicitudes pendientes pueden procesarse
+        if solicitud.estado != "PENDIENTE":
+            raise Exception("La solicitud ya fue procesada")
 
         # ==============================
         # VALIDACIÓN CENTRALIZADA
@@ -60,12 +64,65 @@ class ColaboradorMesRepository:
 
         if ya_existe:
             raise Exception("Ya existe un colaborador del mes para este periodo")
+        
+        # VALIDACIÓN CENTRALIZADA
+        ya_existe = ColaboradorMesRepository.existe_asignacion_mes(
+            db,
+            solicitud.departamento,
+            solicitud.mes,
+            solicitud.anio
+        )
 
         # ==============================
         # ACTUALIZAR ESTADO
         # ==============================
         solicitud.estado = "ACEPTADO"
         solicitud.fecha_asignacion = datetime.now()
+
+        try:
+            db.commit()
+            db.refresh(solicitud)
+
+            colaborador = db.query(Colaborador).filter(
+                Colaborador.numero_nomina == solicitud.numero_nomina
+            ).first()
+
+            return {
+                "id": solicitud.id,
+                "numero_nomina": solicitud.numero_nomina,
+                "nombre": colaborador.nombre if colaborador else None,
+                "puesto_real": colaborador.puesto if colaborador else None,
+                "departamento": solicitud.departamento,
+                "motivo_solicitud": solicitud.motivo_solicitud,
+                "mes": solicitud.mes,
+                "anio": solicitud.anio,
+                "estado": solicitud.estado,
+                "fecha_solicitud": solicitud.fecha_solicitud,
+                "fecha_asignacion": solicitud.fecha_asignacion
+            }
+
+        except Exception as e:
+            db.rollback()
+            raise e
+    
+    # ==============================
+    # RECHAZAR SOLICITUD
+    # ==============================
+    @staticmethod
+    def rechazar_solicitud(db: Session, id_solicitud: int):
+
+        solicitud = db.query(ColaboradorMes).filter(
+            ColaboradorMes.id == id_solicitud
+        ).first()
+
+        if not solicitud:
+            return None
+        
+        # Solo las solicitudes pendientes pueden procesarse
+        if solicitud.estado != "PENDIENTE":
+            raise Exception("La solicitud ya fue procesada")
+
+        solicitud.estado = "RECHAZADO"
 
         try:
             db.commit()
@@ -306,3 +363,42 @@ class ColaboradorMesRepository:
             .filter(ColaboradorMes.estado == "PENDIENTE")
             .count()
         )
+    
+    @staticmethod
+    def obtener_por_id(db: Session, id_solicitud: int):
+        query = (
+            db.query(
+                ColaboradorMes.id,
+                ColaboradorMes.numero_nomina,
+                Colaborador.nombre,
+                ColaboradorMes.departamento,
+                ColaboradorMes.puesto,
+                ColaboradorMes.mes,
+                ColaboradorMes.anio,
+                ColaboradorMes.motivo_solicitud,
+                ColaboradorMes.fecha_solicitud,
+                ColaboradorMes.estado
+            )
+            .join(
+                Colaborador,
+                Colaborador.numero_nomina == ColaboradorMes.numero_nomina
+            )
+            .filter(ColaboradorMes.id == id_solicitud)
+            .first()
+        )
+
+        if not query:
+            return None
+         
+        return {    
+            "id": query.id,
+            "numero_nomina": query.numero_nomina,
+            "nombre": query.nombre,
+            "departamento": query.departamento,
+            "puesto": query.puesto,
+            "mes": query.mes,
+            "anio": query.anio,
+            "motivo_solicitud": query.motivo_solicitud,
+            "fecha_solicitud": query.fecha_solicitud,
+            "estado": query.estado
+        }
