@@ -297,3 +297,12 @@ class ColaboradorMesRepository:
             .filter(ColaboradorMes.estado == "ACEPTADO")
             .count()
         )
+    
+    @staticmethod
+    def contar_pendientes(db: Session):
+
+        return (
+            db.query(ColaboradorMes)
+            .filter(ColaboradorMes.estado == "PENDIENTE")
+            .count()
+        )
