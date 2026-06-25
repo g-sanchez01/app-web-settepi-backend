@@ -293,6 +293,9 @@ class ColaboradorMesRepository:
                 Colaborador,
                 Colaborador.numero_nomina == ColaboradorMes.numero_nomina
             )
+            .order_by(
+                ColaboradorMes.fecha_solicitud.desc()
+            )
         )
 
         if id:
