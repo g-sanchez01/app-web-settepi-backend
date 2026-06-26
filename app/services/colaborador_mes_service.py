@@ -117,7 +117,7 @@ def crear_solicitud(db: Session, data, user):
 def aprobar_solicitud(db: Session, id_solicitud: int, user: Colaborador):
 
     # VALIDACIÓN DE ROL
-    if user.rol != "ADMIN":
+    if user.rol not in ["ADMIN", "ADMIN_DEV"]:
         raise HTTPException(
             status_code=403,
             detail="No tienes permisos para aprobar esta solicitud"
@@ -139,7 +139,7 @@ def aprobar_solicitud(db: Session, id_solicitud: int, user: Colaborador):
 def rechazar_solicitud(db: Session, id_solicitud: int, user: Colaborador):
 
     # VALIDACIÓN DE ROL
-    if user.rol != "ADMIN":
+    if user.rol not in ["ADMIN", "ADMIN_DEV"]:
         raise HTTPException(
             status_code=403,
             detail="No tienes permisos para aprobar esta solicitud"
@@ -189,7 +189,7 @@ def obtener_historial_admin(
     limit: int = 10
 ):
 
-    if user.rol != "ADMIN":
+    if user.rol not in ["ADMIN", "ADMIN_DEV"]:
         raise HTTPException(
             status_code=403,
             detail="No tienes permisos para ver esta información"
