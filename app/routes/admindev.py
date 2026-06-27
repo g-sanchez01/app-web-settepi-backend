@@ -11,7 +11,8 @@ from app.models.colaborador import Colaborador
 
 from app.services.colaborador_service import obtener_equipo_departamento
 from app.services.colaborador_mes_service import (
-    aprobar_solicitud, rechazar_solicitud, obtener_historial_colaborador_mes, obtener_historial_admin, contar_asignados, contar_pendientes
+    aprobar_solicitud, rechazar_solicitud, obtener_historial_colaborador_mes, obtener_historial_admin, 
+    contar_asignados, contar_pendientes, obtener_actual_mes
 )
 
 from app.repositories.colaborador_repository import ColaboradorRepository
