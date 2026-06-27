@@ -9,7 +9,7 @@ from app.schemas.colaborador_mes import ColaboradorMesCreate
 
 from app.models.colaborador import Colaborador
 
-from app.services.colaborador_service import obtener_equipo_departamento
+from app.services.colaborador_service import obtener_equipo_departamento, obtener_usuarios, contar_usuarios
 from app.services.colaborador_mes_service import (
     aprobar_solicitud, rechazar_solicitud, obtener_historial_colaborador_mes, obtener_historial_admin, 
     contar_asignados, contar_pendientes, obtener_actual_mes
@@ -167,6 +167,44 @@ def obtener_solicitud_por_id(
         )
 
     return solicitud
+
+# ================================
+# USUARIOS
+# ================================
+@router.get("/usuarios")
+def obtener_usuarios_admin(
+    nomina: str | None = None,
+    nombre: str | None = None,
+    departamento: str | None = None,
+    estado: str | None = None,
+    fecha_creacion: date | None = None,
+    offset: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    user: Colaborador = Depends(get_current_user)
+):
+
+    return obtener_usuarios(
+        db=db,
+        user=user,
+        nomina=nomina,
+        nombre=nombre,
+        departamento=departamento,
+        estado=estado,
+        fecha_creacion=fecha_creacion,
+        offset=offset,
+        limit=limit
+    )
+
+
+@router.get("/usuarios/total")
+def total_asignados(
+    db: Session = Depends(get_db),
+):
+
+    return {
+        "total": contar_usuarios(db)
+    }
 
 
 

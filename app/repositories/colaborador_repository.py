@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from datetime import datetime
-from sqlalchemy import func
+from datetime import datetime, date
+from sqlalchemy import cast, Date, func
 from app.models.colaborador import Colaborador
 from app.models.colaborador_mes import ColaboradorMes
 
@@ -88,4 +88,68 @@ class ColaboradorRepository:
             db.query(func.count(Colaborador.numero_nomina))
             .filter(Colaborador.departamento == departamento)
             .scalar()
+        )
+    
+    # Obtener a todos los usuarios de la plataforma
+    @staticmethod
+    def obtener_todos(
+        db: Session,
+        nomina: str | None = None,
+        nombre: str | None = None,
+        departamento: str | None = None,
+        estado: str | None = None,
+        fecha_creacion: date | None = None,
+        offset: int = 0,
+        limit: int = 10
+    ):
+        query = db.query(Colaborador)
+
+        if nomina:
+            query = query.filter(
+                Colaborador.numero_nomina == nomina
+            )
+
+        if nombre:
+            query = query.filter(
+                Colaborador.nombre == nombre
+            )
+        
+        if departamento:
+            query = query.filter(
+                Colaborador.departamento == departamento
+            )
+
+        if estado:
+
+            if isinstance(estado, list):
+                query = query.filter(
+                    Colaborador.estado.in_(estado)
+                )
+            else:
+                query = query.filter(
+                    Colaborador.estado == estado
+                )
+
+        if fecha_creacion:
+            query = query.filter(
+                cast(Colaborador.fecha_creacion, Date) == fecha_creacion
+            )
+        
+        return (
+            query
+            .order_by(
+                Colaborador.fecha_creacion.desc()
+            )
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+    
+    @staticmethod
+    def contar_usuarios(db: Session):
+
+        return (
+            db.query(Colaborador)
+            .filter(Colaborador.estado == "ACTIVO")
+            .count()
         )
