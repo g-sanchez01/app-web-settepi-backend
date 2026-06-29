@@ -22,7 +22,7 @@ if not SECRET_KEY:
     raise Exception("SECRET_KEY no configurada en .env")
 
 # =========================
-# 🔐 HTTP BEARER (REEMPLAZA OAUTH2)
+# 🔐 HTTP BEARER
 # =========================
 oauth2_scheme = HTTPBearer()
 
@@ -45,9 +45,7 @@ def create_token(data: dict):
 
     expire = datetime.utcnow() + timedelta(minutes=EXPIRE_MINUTES)
 
-    to_encode.update({
-        "exp": expire
-    })
+    to_encode.update({"exp": expire})
 
     return jwt.encode(
         to_encode,
@@ -56,7 +54,20 @@ def create_token(data: dict):
     )
 
 # =========================
-# 👤 GET CURRENT USER (HTTPBEARER VERSION)
+# 🛡️ VALIDAR USUARIO ACTIVO (FIX ROBUSTO)
+# =========================
+def is_user_active(user: Colaborador):
+
+    estado = (user.estado or "").strip().upper()
+
+    if estado != "ACTIVO":
+        raise HTTPException(
+            status_code=403,
+            detail="Tu cuenta está desactivada o en revisión. Contacta al administrador."
+        )
+
+# =========================
+# 👤 GET CURRENT USER
 # =========================
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme)
@@ -66,7 +77,7 @@ def get_current_user(
 
     credentials_exception = HTTPException(
         status_code=401,
-        detail="Token inválido o expirado",
+        detail="Sesión inválida o expirada. Inicie sesión nuevamente.",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
@@ -93,8 +104,15 @@ def get_current_user(
     finally:
         db.close()
 
+    # NO EXISTE USUARIO
     if not user:
-        raise credentials_exception
+        raise HTTPException(
+            status_code=404,
+            detail="Usuario no encontrado en el sistema"
+        )
+
+    # 🚫 VALIDACIÓN DE ESTADO
+    is_user_active(user)
 
     return user
 
@@ -108,7 +126,7 @@ def require_roles(roles: list):
         if user.rol not in roles:
             raise HTTPException(
                 status_code=403,
-                detail="No tienes permisos"
+                detail="No tienes permisos para realizar esta acción"
             )
 
         return user
