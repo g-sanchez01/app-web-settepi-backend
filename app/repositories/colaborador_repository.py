@@ -3,6 +3,7 @@ from datetime import datetime, date
 from sqlalchemy import cast, Date, func
 from app.models.colaborador import Colaborador
 from app.models.colaborador_mes import ColaboradorMes
+from app.schemas.usuario import UserCreate
 
 class ColaboradorRepository:
 
@@ -145,6 +146,20 @@ class ColaboradorRepository:
             .all()
         )
     
+    # Obtener colaborador por número de nómina
+    @staticmethod
+    def obtener_por_nomina(
+        db: Session,
+        numero_nomina: int
+    ):
+        return (
+            db.query(Colaborador)
+            .filter(
+                Colaborador.numero_nomina == numero_nomina
+            )
+            .first()
+        )
+    
     @staticmethod
     def contar_usuarios(db: Session):
 
@@ -153,3 +168,75 @@ class ColaboradorRepository:
             .filter(Colaborador.estado == "ACTIVO")
             .count()
         )
+    
+    @staticmethod
+    def insertar_usuario(
+        db: Session,
+        usuario: UserCreate
+    ):
+        usuario = Colaborador(
+            numero_nomina=usuario.numero_nomina,
+            nombre=usuario.nombre,
+            telefono=usuario.telefono,
+            imss=usuario.imss,
+            puesto=usuario.puesto,
+            departamento=usuario.departamento,
+            estado="ACTIVO",
+            rol="GENERAL"
+        )
+
+        db.add(usuario)
+        db.commit()
+        db.refresh(usuario)
+
+        return usuario
+    
+    @staticmethod
+    def desactivar_usuario(
+        db: Session,
+        numero_nomina: int
+    ):
+        usuario = (
+            db.query(Colaborador)
+            .filter(
+                Colaborador.numero_nomina == numero_nomina
+            )
+            .first()
+        )
+
+        if not usuario:
+            return None
+
+        usuario.estado = "BAJA"
+        usuario.fecha_actualizacion = datetime.utcnow()
+
+        db.commit()
+        db.refresh(usuario)
+
+        return usuario
+    
+    @staticmethod
+    def reactivar_usuario(
+        db: Session,
+        numero_nomina: int
+    ):
+        usuario = (
+            db.query(Colaborador)
+            .filter(
+                Colaborador.numero_nomina == numero_nomina
+            )
+            .first()
+        )
+
+        if not usuario:
+            return None
+
+        usuario.estado = "ACTIVO"
+        usuario.fecha_actualizacion = datetime.utcnow()
+
+        db.commit()
+        db.refresh(usuario)
+
+        return usuario
+
+    

@@ -1,7 +1,7 @@
 # ================================
 # IMPORTS ORM
 # ================================
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Identity
 from datetime import datetime
 from app.config.database import Base
 
@@ -16,7 +16,18 @@ class Colaborador(Base):
     # ================================
     # COLUMNAS DE LA TABLA
     # ================================
-    numero_nomina = Column(Integer, primary_key=True)
+    id = Column(
+        Integer,
+        Identity(),
+        primary_key=True
+    )
+
+    numero_nomina = Column(
+        Integer,
+        unique=True,
+        nullable=False
+    )
+    
     nombre = Column(String(100))
     telefono = Column(String(10))
     imss = Column(String(255))

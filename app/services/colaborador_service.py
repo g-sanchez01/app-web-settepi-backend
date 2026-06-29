@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from datetime import date
 
 from app.models.colaborador import Colaborador
 from app.repositories.colaborador_repository import ColaboradorRepository
+from app.schemas.usuario import UserCreate
 
 
 # Obtener integrantes del equipo
@@ -52,7 +54,72 @@ def obtener_usuarios(
         limit=limit
     )
 
+def obtener_por_nomina_usuario(
+    db: Session,
+    numero_nomina: int
+):
+    usuario = ColaboradorRepository.obtener_por_nomina(
+        db,
+        numero_nomina
+)
+
+    if not usuario:
+        raise HTTPException(
+            status_code=404,
+            detail="Usuario no encontrado"
+        )
+
+    return usuario
+
 def contar_usuarios(db: Session):
     return ColaboradorRepository.contar_usuarios(db)
+
+def insertar_usuario(
+    db: Session,
+    usuario: UserCreate
+):
+    colaborador = ColaboradorRepository.obtener_por_nomina(
+        db,
+        usuario.numero_nomina
+    )
+
+    if colaborador:
+        raise HTTPException(
+            status_code=400,
+            detail="Ya existe un usuario con ese número de nómina."
+        )
+
+    return ColaboradorRepository.insertar_usuario(
+        db=db,
+        usuario=usuario
+    )
+
+def desactivar_usuario(
+    db: Session,
+    numero_nomina: int
+):
+    usuario = ColaboradorRepository.desactivar_usuario(
+        db=db,
+        numero_nomina=numero_nomina
+    )
+
+    if not usuario:
+        raise HTTPException(
+            status_code=404,
+            detail="Usuario no encontrado"
+        )
+
+    return usuario
+
+def reactivar_usuario(db: Session, numero_nomina: int):
+    usuario = ColaboradorRepository.reactivar_usuario(db, numero_nomina)
+
+    if not usuario:
+        raise HTTPException(
+            status_code=404,
+            detail="Usuario no encontrado"
+        )
+
+    return usuario
 
 

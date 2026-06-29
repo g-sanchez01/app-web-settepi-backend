@@ -6,13 +6,15 @@ from app.config.database import get_db
 from app.core.security import get_current_user
 
 from app.schemas.colaborador_mes import ColaboradorMesCreate
+from app.schemas.colaborador import ColaboradorResponse
+from app.schemas.usuario import UserCreate
 
 from app.models.colaborador import Colaborador
 
-from app.services.colaborador_service import obtener_equipo_departamento, obtener_usuarios, contar_usuarios
+from app.services.colaborador_service import obtener_equipo_departamento, obtener_usuarios, contar_usuarios, obtener_por_nomina_usuario, insertar_usuario, desactivar_usuario, reactivar_usuario
 from app.services.colaborador_mes_service import (
     aprobar_solicitud, rechazar_solicitud, obtener_historial_colaborador_mes, obtener_historial_admin, 
-    contar_asignados, contar_pendientes, obtener_actual_mes
+    contar_asignados, contar_pendientes, obtener_actual_mes, 
 )
 
 from app.repositories.colaborador_repository import ColaboradorRepository
@@ -205,6 +207,50 @@ def total_asignados(
     return {
         "total": contar_usuarios(db)
     }
+
+
+@router.get(
+    "/usuarios/{numero_nomina}",
+    response_model=ColaboradorResponse
+)
+def obtener_usuario(
+    numero_nomina: int,
+    db: Session = Depends(get_db)
+):
+    return obtener_por_nomina_usuario(
+        db,
+        numero_nomina
+    )
+
+@router.post("/usuarios/create")
+def crear_usuario(
+    usuario: UserCreate,
+    db: Session = Depends(get_db)
+):
+    return insertar_usuario(
+        db=db,
+        usuario=usuario
+    )
+
+@router.patch("/usuarios/{numero_nomina}/desactivar")
+def desactivar_usuario_admin(
+    numero_nomina: int,
+    db: Session = Depends(get_db)
+):
+    return desactivar_usuario(
+        db=db,
+        numero_nomina=numero_nomina
+    )
+
+@router.patch("/usuarios/{numero_nomina}/reactivar")
+def reactivar_usuario_admin(
+    numero_nomina: int,
+    db: Session = Depends(get_db)
+):
+    return reactivar_usuario(
+        db=db,
+        numero_nomina=numero_nomina
+    )
 
 
 
