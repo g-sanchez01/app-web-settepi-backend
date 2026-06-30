@@ -6,7 +6,6 @@ from datetime import datetime
 # Que los 4 sean tipo string.
 class IdeaCreate(BaseModel):
     unidadNegocio: str
-    zona: str
     tituloIdea: str
     descripcionIdea: str
 
@@ -20,7 +19,6 @@ class IdeaResponse(BaseModel):
     telefono: str | None = None
 
     unidadNegocio: str | None = None
-    zona: str | None = None
     departamento: str | None = None
 
     tituloIdea: str
@@ -35,7 +33,6 @@ class IdeaResponse(BaseModel):
 # Actualizar idea
 class IdeaUpdate(BaseModel):
     unidadNegocio: str
-    zona: str
     tituloIdea: str
     descripcionIdea: str
 

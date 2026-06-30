@@ -99,7 +99,6 @@ class IdeaRepository:
         nomina: str | None = None,
         telefono: str | None = None,
         unidadNegocio: str | None = None,
-        zona: str | None = None,
         departamento: str | None = None,
         tituloIdea: str | None = None,
         estado: str | None = None,
@@ -137,11 +136,6 @@ class IdeaRepository:
         if unidadNegocio:
             query = query.filter(
                 IdeaFormulario.unidadNegocio == unidadNegocio
-            )
-        
-        if zona:
-            query = query.filter(
-                IdeaFormulario.zona == zona
             )
         
         if departamento:

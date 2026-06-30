@@ -14,7 +14,6 @@ class IdeaFormulario(Base):
     telefono = Column(String(10))
 
     unidadNegocio = Column(String(100))
-    zona = Column(String(100))
     departamento = Column(String(255))
 
     tituloIdea = Column(String(255))
