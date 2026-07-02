@@ -8,4 +8,5 @@ class UserToken(BaseModel):
     nombre: str
     telefono: str
     departamento: str
+    area: str
     rol: str

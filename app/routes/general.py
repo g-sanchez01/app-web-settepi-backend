@@ -30,7 +30,8 @@ def obtener_colaborador_mes_actual(
 ):
     resultado = ColaboradorMesRepository.obtener_actual(
         db,
-        user.departamento
+        user.departamento,
+        user.area
     )
 
     if not resultado:

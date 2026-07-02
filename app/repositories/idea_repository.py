@@ -100,6 +100,7 @@ class IdeaRepository:
         telefono: str | None = None,
         unidadNegocio: str | None = None,
         departamento: str | None = None,
+        area: str | None = None,
         tituloIdea: str | None = None,
         estado: str | None = None,
         fecha: date | None = None,
@@ -141,6 +142,11 @@ class IdeaRepository:
         if departamento:
             query = query.filter(
                 IdeaFormulario.departamento == departamento
+            )
+        
+        if area:
+            query = query.filter(
+                IdeaFormulario.area == area
             )
         
         if tituloIdea:

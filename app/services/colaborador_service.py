@@ -16,8 +16,6 @@ def obtener_equipo_departamento(
     offset: int = 0,
     limit: int = 5
 ):
-    
-    print("Departamento:", user.departamento)
 
     return ColaboradorRepository.obtener_por_departamento(
         db=db,
@@ -35,6 +33,7 @@ def obtener_usuarios(
     nomina: str | None = None,
     nombre: str | None = None,
     departamento: str | None = None,
+    area: str | None = None,
     estado: str | None = None,
     fecha_creacion: date | None = None,
     offset: int = 0,
@@ -48,6 +47,7 @@ def obtener_usuarios(
         nomina=nomina,
         nombre=nombre,
         departamento=departamento,
+        area=area,
         estado=estado,
         fecha_creacion=fecha_creacion,
         offset=offset,

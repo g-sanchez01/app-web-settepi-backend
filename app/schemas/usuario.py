@@ -7,3 +7,4 @@ class UserCreate(BaseModel):
     imss: str
     puesto: str
     departamento: str
+    area: str

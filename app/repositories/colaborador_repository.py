@@ -48,8 +48,7 @@ class ColaboradorRepository:
             .filter(
                 Colaborador.departamento == departamento,
                 Colaborador.estado == "ACTIVO",
-                Colaborador.puesto != "GERENTE",
-                Colaborador.puesto != "GERENTE REGIONAL"
+                Colaborador.rol != "LIDER",
             )
         )
 
@@ -77,6 +76,7 @@ class ColaboradorRepository:
                 "nombre": colaborador.nombre,
                 "puesto": colaborador.puesto,
                 "departamento": colaborador.departamento,
+                "area": colaborador.area,
                 "estado_solicitud": estado if estado else "SIN SOLICITUD"
             }
             
@@ -84,12 +84,19 @@ class ColaboradorRepository:
         ]
     
     @staticmethod
-    def contar_integrantes(db, departamento: str):
+    def contar_integrantes(
+        db: Session, 
+        departamento: str
+    ):
         return (
-            db.query(func.count(Colaborador.numero_nomina))
-            .filter(Colaborador.departamento == departamento)
-            .scalar()
+        db.query(func.count(Colaborador.numero_nomina))
+        .filter(
+            Colaborador.departamento == departamento,
+            Colaborador.estado == "ACTIVO",
+            Colaborador.rol != "LIDER"
         )
+        .scalar()
+    )
     
     # Obtener a todos los usuarios de la plataforma
     @staticmethod
@@ -98,6 +105,7 @@ class ColaboradorRepository:
         nomina: str | None = None,
         nombre: str | None = None,
         departamento: str | None = None,
+        area: str | None = None,
         estado: str | None = None,
         fecha_creacion: date | None = None,
         offset: int = 0,
@@ -118,6 +126,11 @@ class ColaboradorRepository:
         if departamento:
             query = query.filter(
                 Colaborador.departamento == departamento
+            )
+
+        if area:
+            query = query.filter(
+                Colaborador.area == area
             )
 
         if estado:
@@ -181,6 +194,7 @@ class ColaboradorRepository:
             imss=usuario.imss,
             puesto=usuario.puesto,
             departamento=usuario.departamento,
+            area=usuario.area,
             estado="ACTIVO",
             rol="GENERAL"
         )

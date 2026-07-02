@@ -15,6 +15,7 @@ class ColaboradorMesRepository:
         ya_existe = ColaboradorMesRepository.existe_asignacion_mes(
             db,
             data.departamento,
+            data.area,
             data.mes,
             data.anio
         )
@@ -58,6 +59,7 @@ class ColaboradorMesRepository:
         ya_existe = ColaboradorMesRepository.existe_asignacion_mes(
             db,
             solicitud.departamento,
+            solicitud.area,
             solicitud.mes,
             solicitud.anio
         )
@@ -93,6 +95,7 @@ class ColaboradorMesRepository:
                 "nombre": colaborador.nombre if colaborador else None,
                 "puesto_real": colaborador.puesto if colaborador else None,
                 "departamento": solicitud.departamento,
+                "area": solicitud.area,
                 "motivo_solicitud": solicitud.motivo_solicitud,
                 "mes": solicitud.mes,
                 "anio": solicitud.anio,
@@ -138,6 +141,7 @@ class ColaboradorMesRepository:
                 "nombre": colaborador.nombre if colaborador else None,
                 "puesto_real": colaborador.puesto if colaborador else None,
                 "departamento": solicitud.departamento,
+                "area": solicitud.area,
                 "motivo_solicitud": solicitud.motivo_solicitud,
                 "mes": solicitud.mes,
                 "anio": solicitud.anio,
@@ -153,7 +157,8 @@ class ColaboradorMesRepository:
     @staticmethod
     def obtener_actual(
         db: Session,
-        departamento: str
+        departamento: str,
+        area: str
     ):
         hoy = datetime.now()
 
@@ -161,6 +166,7 @@ class ColaboradorMesRepository:
             db.query(ColaboradorMes)
             .filter(
                 ColaboradorMes.departamento == departamento,
+                ColaboradorMes.area == area,
                 ColaboradorMes.mes == hoy.month,
                 ColaboradorMes.anio == hoy.year,
                 ColaboradorMes.estado == "ACEPTADO"
@@ -185,6 +191,7 @@ class ColaboradorMesRepository:
             "nombre": colaborador.nombre if colaborador else None,
             "puesto_real": colaborador.puesto if colaborador else None,
             "departamento": solicitud.departamento,
+            "area": solicitud.area,
             "motivo_solicitud": solicitud.motivo_solicitud,
             "mes": solicitud.mes,
             "anio": solicitud.anio,
@@ -196,7 +203,8 @@ class ColaboradorMesRepository:
     @staticmethod
     def solicitud_activa_departamento(
         db: Session,
-        departamento: str
+        departamento: str,
+        area: str
     ):
         hoy = datetime.now()
 
@@ -204,6 +212,7 @@ class ColaboradorMesRepository:
             db.query(ColaboradorMes)
             .filter(
                 ColaboradorMes.departamento == departamento,
+                ColaboradorMes.area == area,
                 ColaboradorMes.estado.in_(["PENDIENTE", "ACEPTADO"]),
                 ColaboradorMes.mes == hoy.month,
                 ColaboradorMes.anio == hoy.year
@@ -213,9 +222,10 @@ class ColaboradorMesRepository:
         )
     
     @staticmethod
-    def existe_asignacion_mes(db: Session, departamento: str, mes: int, anio: int):
+    def existe_asignacion_mes(db: Session, departamento: str, area: str, mes: int, anio: int):
         return db.query(ColaboradorMes).filter(
             ColaboradorMes.departamento == departamento,
+            ColaboradorMes.area == area,
             ColaboradorMes.mes == mes,
             ColaboradorMes.anio == anio,
             ColaboradorMes.estado == "ACEPTADO"
@@ -224,13 +234,15 @@ class ColaboradorMesRepository:
     @staticmethod
     def obtener_historial(
         db: Session,
-        departamento: str
+        departamento: str,
+        area: str
     ):
         resultados = (
             db.query(
                 ColaboradorMes.numero_nomina,
                 Colaborador.nombre,
                 ColaboradorMes.departamento,
+                ColaboradorMes.area,
                 ColaboradorMes.puesto,
                 ColaboradorMes.mes,
                 ColaboradorMes.anio
@@ -241,6 +253,7 @@ class ColaboradorMesRepository:
             )
             .filter(
                 ColaboradorMes.departamento == departamento,
+                ColaboradorMes.area == area,
                 ColaboradorMes.estado == "ACEPTADO"
             )
             .order_by(
@@ -254,6 +267,7 @@ class ColaboradorMesRepository:
                 "numero_nomina": item.numero_nomina,
                 "nombre": item.nombre,
                 "departamento": item.departamento,
+                "area": item.area,
                 "puesto": item.puesto,
                 "mes": item.mes,
                 "anio": item.anio
@@ -271,6 +285,7 @@ class ColaboradorMesRepository:
         numero_nomina: str | None = None,
         nombre: str | None = None,
         departamento: str | None = None,
+        area: str | None = None,
         fecha_solicitud: date | None = None,
         estado: str | None = None,
         offset: int = 0,
@@ -283,6 +298,7 @@ class ColaboradorMesRepository:
                 ColaboradorMes.numero_nomina,
                 Colaborador.nombre,
                 ColaboradorMes.departamento,
+                ColaboradorMes.area,
                 ColaboradorMes.puesto,
                 ColaboradorMes.mes,
                 ColaboradorMes.anio,
@@ -309,6 +325,11 @@ class ColaboradorMesRepository:
 
         if departamento:
             query = query.filter(ColaboradorMes.departamento == departamento)
+        
+        if area:
+            query = query.filter(
+                ColaboradorMes.area == area
+            )
 
         if fecha_solicitud:
             query = query.filter(
@@ -339,6 +360,7 @@ class ColaboradorMesRepository:
                     "numero_nomina": item.numero_nomina,
                     "nombre": item.nombre,
                     "departamento": item.departamento,
+                    "area": item.area,
                     "puesto": item.puesto,
                     "mes": item.mes,
                     "anio": item.anio,
@@ -375,6 +397,7 @@ class ColaboradorMesRepository:
                 ColaboradorMes.numero_nomina,
                 Colaborador.nombre,
                 ColaboradorMes.departamento,
+                ColaboradorMes.area,
                 ColaboradorMes.puesto,
                 ColaboradorMes.mes,
                 ColaboradorMes.anio,
@@ -398,6 +421,7 @@ class ColaboradorMesRepository:
             "numero_nomina": query.numero_nomina,
             "nombre": query.nombre,
             "departamento": query.departamento,
+            "area": query.area,
             "puesto": query.puesto,
             "mes": query.mes,
             "anio": query.anio,

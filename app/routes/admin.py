@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import date
 
 from app.config.database import get_db
 from app.core.security import get_current_user
-
-from app.schemas.colaborador_mes import ColaboradorMesCreate
 
 from app.models.colaborador import Colaborador
 
@@ -52,7 +50,7 @@ def obtener_total_equipo(
 ):
     total = ColaboradorRepository.contar_integrantes(
         db=db,
-        departamento=user.departamento
+        departamento=user.departamento,
     )
 
     return {"total": total}
@@ -111,6 +109,7 @@ def obtener_historial_admin_colaborador_mes(
     numero_nomina: str | None = None,
     nombre: str | None = None,
     departamento: str | None = None,
+    area: str | None = None,
     fecha_solicitud: date | None = None,
     estado: str | None = None,
     offset: int = 0,
@@ -125,6 +124,7 @@ def obtener_historial_admin_colaborador_mes(
         numero_nomina=numero_nomina,
         nombre=nombre,
         departamento=departamento,
+        area=area,
         fecha_solicitud=fecha_solicitud,
         estado=estado,
         offset=offset,
@@ -141,7 +141,7 @@ def total_asignados(
     }
 
 @router.get("/colaborador-mes/pendientes/total")
-def total_asignados(
+def total_pendientes(
     db: Session = Depends(get_db),
 ):
 

@@ -15,6 +15,7 @@ class IdeaFormulario(Base):
 
     unidadNegocio = Column(String(100))
     departamento = Column(String(255))
+    area = Column(String(255))
 
     tituloIdea = Column(String(255))
     descripcionIdea = Column(String)

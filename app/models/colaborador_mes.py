@@ -13,6 +13,7 @@ class ColaboradorMes(Base):
     )
 
     departamento = Column(String(100), nullable=False)
+    area = Column(String(100), nullable=False)
 
     puesto = Column(String(100), nullable=False)
 

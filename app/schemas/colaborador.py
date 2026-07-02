@@ -11,6 +11,7 @@ class ColaboradorResponse(BaseModel):
     telefono: Optional[str] = None
     puesto: str
     departamento: str
+    area: str
     rol: str
     estado: str
     fecha_creacion: datetime

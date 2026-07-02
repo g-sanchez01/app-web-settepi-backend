@@ -33,6 +33,7 @@ class Colaborador(Base):
     imss = Column(String(255))
     puesto = Column(String(100))
     departamento = Column(String(100))
+    area = Column(String(100))
     estado = Column(String(10))
 
     fecha_creacion = Column(DateTime, default=datetime.utcnow)

@@ -20,6 +20,7 @@ class IdeaResponse(BaseModel):
 
     unidadNegocio: str | None = None
     departamento: str | None = None
+    area: str | None = None
 
     tituloIdea: str
     descripcionIdea: str

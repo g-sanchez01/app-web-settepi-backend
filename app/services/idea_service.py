@@ -19,6 +19,7 @@ def crear_idea(data: IdeaCreate, user: Colaborador, db: Session):
         nomina=user.numero_nomina,
         telefono=user.telefono,
         departamento=user.departamento,
+        area=user.area,
 
         unidadNegocio=data.unidadNegocio,
         tituloIdea=data.tituloIdea,
@@ -93,6 +94,7 @@ def obtener_ideas(
     telefono: str | None = None,
     unidadNegocio: str | None = None,
     departamento: str | None = None,
+    area: str | None = None,
     tituloIdea: str | None = None,
     estado: str | None = None,
     fecha: date | None = None,
@@ -111,6 +113,7 @@ def obtener_ideas(
             telefono=telefono,
             unidadNegocio=unidadNegocio,
             departamento=departamento,
+            area=area,
             tituloIdea=tituloIdea,
             estado=estado_filtro,
             fecha=fecha,
