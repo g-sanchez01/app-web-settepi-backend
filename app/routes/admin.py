@@ -27,7 +27,7 @@ router = APIRouter(
 @router.get("/equipo")
 def obtener_equipo(
     numero_nomina: str | None = None,
-    puesto: str | None = None,
+    area: str | None = None,
     offset: int = 0,
     limit: int = 5,
     db: Session = Depends(get_db),
@@ -38,7 +38,7 @@ def obtener_equipo(
         db=db,
         user=user,
         numero_nomina=numero_nomina,
-        puesto=puesto,
+        area=area,
         offset=offset,
         limit=limit
     )

@@ -68,8 +68,7 @@ def crear_solicitud(db: Session, data, user):
     solicitud_activa = (
         ColaboradorMesRepository.solicitud_activa_departamento(
             db,
-            colaborador.departamento,
-            colaborador.area
+            colaborador.departamento
         )
     )
 
@@ -162,13 +161,11 @@ def rechazar_solicitud(db: Session, id_solicitud: int, user: Colaborador):
 
 def obtener_actual_mes(
     db: Session,
-    departamento: str,
-    area: str
+    departamento: str
 ):
     return ColaboradorMesRepository.obtener_actual(
         db,
-        departamento,
-        area
+        departamento
     )
 
 def obtener_historial_colaborador_mes(
@@ -177,8 +174,7 @@ def obtener_historial_colaborador_mes(
 ):
     return ColaboradorMesRepository.obtener_historial(
         db=db,
-        departamento=user.departamento,
-        area=user.area
+        departamento=user.departamento
     )
 
 def obtener_historial_admin(

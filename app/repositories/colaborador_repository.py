@@ -12,7 +12,7 @@ class ColaboradorRepository:
         db: Session,
         departamento: str,
         numero_nomina: str | None = None,
-        puesto: str | None = None,
+        area: str | None = None,
         offset: int = 0,
         limit: int = 5
 
@@ -57,9 +57,9 @@ class ColaboradorRepository:
                 Colaborador.numero_nomina == numero_nomina
             )
 
-        if puesto:
+        if area:
             query = query.filter(
-                Colaborador.puesto.ilike(f"%{puesto}%")
+                Colaborador.area.ilike(f"%{area}%")
             )
 
         resultados = (

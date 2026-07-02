@@ -15,7 +15,6 @@ class ColaboradorMesRepository:
         ya_existe = ColaboradorMesRepository.existe_asignacion_mes(
             db,
             data.departamento,
-            data.area,
             data.mes,
             data.anio
         )
@@ -51,29 +50,26 @@ class ColaboradorMesRepository:
         
         # Solo las solicitudes pendientes pueden procesarse
         if solicitud.estado != "PENDIENTE":
-            raise Exception("La solicitud ya fue procesada")
+            raise HTTPException(
+                status_code=400,
+                detail="La solicitud ya fue procesada"
+            )
 
         # ==============================
         # VALIDACIÓN CENTRALIZADA
         # ==============================
-        ya_existe = ColaboradorMesRepository.existe_asignacion_mes(
-            db,
-            solicitud.departamento,
-            solicitud.area,
-            solicitud.mes,
-            solicitud.anio
-        )
-
-        if ya_existe:
-            raise Exception("Ya existe un colaborador del mes para este periodo")
-        
-        # VALIDACIÓN CENTRALIZADA
         ya_existe = ColaboradorMesRepository.existe_asignacion_mes(
             db,
             solicitud.departamento,
             solicitud.mes,
             solicitud.anio
         )
+
+        if ya_existe:
+            raise HTTPException(
+                status_code=400,
+                detail="Ya existe un colaborador del mes para este periodo"
+            )
 
         # ==============================
         # ACTUALIZAR ESTADO
@@ -123,7 +119,10 @@ class ColaboradorMesRepository:
         
         # Solo las solicitudes pendientes pueden procesarse
         if solicitud.estado != "PENDIENTE":
-            raise Exception("La solicitud ya fue procesada")
+            raise HTTPException(
+                status_code=400,
+                detail="La solicitud ya fue procesada"
+            )
 
         solicitud.estado = "RECHAZADO"
 
@@ -157,8 +156,7 @@ class ColaboradorMesRepository:
     @staticmethod
     def obtener_actual(
         db: Session,
-        departamento: str,
-        area: str
+        departamento: str
     ):
         hoy = datetime.now()
 
@@ -166,7 +164,6 @@ class ColaboradorMesRepository:
             db.query(ColaboradorMes)
             .filter(
                 ColaboradorMes.departamento == departamento,
-                ColaboradorMes.area == area,
                 ColaboradorMes.mes == hoy.month,
                 ColaboradorMes.anio == hoy.year,
                 ColaboradorMes.estado == "ACEPTADO"
@@ -204,7 +201,6 @@ class ColaboradorMesRepository:
     def solicitud_activa_departamento(
         db: Session,
         departamento: str,
-        area: str
     ):
         hoy = datetime.now()
 
@@ -212,7 +208,6 @@ class ColaboradorMesRepository:
             db.query(ColaboradorMes)
             .filter(
                 ColaboradorMes.departamento == departamento,
-                ColaboradorMes.area == area,
                 ColaboradorMes.estado.in_(["PENDIENTE", "ACEPTADO"]),
                 ColaboradorMes.mes == hoy.month,
                 ColaboradorMes.anio == hoy.year
@@ -222,10 +217,9 @@ class ColaboradorMesRepository:
         )
     
     @staticmethod
-    def existe_asignacion_mes(db: Session, departamento: str, area: str, mes: int, anio: int):
+    def existe_asignacion_mes(db: Session, departamento: str, mes: int, anio: int):
         return db.query(ColaboradorMes).filter(
             ColaboradorMes.departamento == departamento,
-            ColaboradorMes.area == area,
             ColaboradorMes.mes == mes,
             ColaboradorMes.anio == anio,
             ColaboradorMes.estado == "ACEPTADO"
@@ -234,8 +228,7 @@ class ColaboradorMesRepository:
     @staticmethod
     def obtener_historial(
         db: Session,
-        departamento: str,
-        area: str
+        departamento: str
     ):
         resultados = (
             db.query(
@@ -253,7 +246,6 @@ class ColaboradorMesRepository:
             )
             .filter(
                 ColaboradorMes.departamento == departamento,
-                ColaboradorMes.area == area,
                 ColaboradorMes.estado == "ACEPTADO"
             )
             .order_by(

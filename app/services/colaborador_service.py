@@ -12,7 +12,7 @@ def obtener_equipo_departamento(
     db: Session,
     user: Colaborador,
     numero_nomina: str | None = None,
-    puesto: str | None = None,
+    area: str | None = None,
     offset: int = 0,
     limit: int = 5
 ):
@@ -21,7 +21,7 @@ def obtener_equipo_departamento(
         db=db,
         departamento=user.departamento,
         numero_nomina=numero_nomina,
-        puesto=puesto,
+        area=area,
         offset=offset,
         limit=limit
     )
