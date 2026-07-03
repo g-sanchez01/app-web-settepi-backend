@@ -5,7 +5,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # ================================
-# 🔗 CONFIGURACIÓN DE CONEXIÓN A BD
+# 🔗 CONFIGURACIÓN DE CONEXIÓN A BD PROD
+# ================================
+#DATABASE_URL = (
+#    "mssql+pyodbc://settepi_userPROD:S33TT3P1MTY_2026@localhost/SettepiDB_PROD"
+#    "?driver=ODBC+Driver+17+for+SQL+Server"
+#)
+
+# ================================
+# 🔗 CONFIGURACIÓN DE CONEXIÓN A BD QA
 # ================================
 DATABASE_URL = (
     "mssql+pyodbc://settepi_userDEV:s3tt3p02026@localhost/SettepiDB_DEV"
