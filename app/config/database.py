@@ -1,24 +1,24 @@
-# ================================
-# 📦 IMPORTS DE SQLALCHEMY
-# ================================
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # ================================
 # 🔗 CONFIGURACIÓN DE CONEXIÓN A BD PROD
 # ================================
-#DATABASE_URL = (
-#    "mssql+pyodbc://settepi_userPROD:S33TT3P1MTY_2026@localhost/SettepiDB_PROD"
-#    "?driver=ODBC+Driver+17+for+SQL+Server"
-#)
+DATABASE_URL = (
+    "mssql+pyodbc://adminsql:admin2026$"
+    "@databasesettepiapp.database.windows.net:1433/SettepiApp"
+    "?driver=ODBC+Driver+18+for+SQL+Server"
+    "&Encrypt=yes"
+    "&TrustServerCertificate=no"
+)
 
 # ================================
 # 🔗 CONFIGURACIÓN DE CONEXIÓN A BD QA
 # ================================
-DATABASE_URL = (
-    "mssql+pyodbc://settepi_userDEV:s3tt3p02026@localhost/SettepiDB_DEV"
-    "?driver=ODBC+Driver+17+for+SQL+Server"
-)
+#DATABASE_URL = (
+#    "mssql+pyodbc://settepi_userDEV:s3tt3p02026@localhost/SettepiDB_DEV"
+#    "?driver=ODBC+Driver+17+for+SQL+Server"
+#)
 
 # Engine: conecta la app con la base de datos
 engine = create_engine(DATABASE_URL)
