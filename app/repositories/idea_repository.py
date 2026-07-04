@@ -1,4 +1,5 @@
 from app.models.idea_formulario import IdeaFormulario
+from app.schemas.idea import IdeaUpdate
 from sqlalchemy.orm import Session
 from sqlalchemy import cast, Date, func
 from datetime import date
