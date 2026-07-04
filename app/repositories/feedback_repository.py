@@ -1,5 +1,6 @@
 from app.models.feedback_formulario import FeedbackFormulario
 from sqlalchemy import cast, Date, func
+from sqlalchemy.orm import Session
 from datetime import date
 
 class FeedbackRepository:
