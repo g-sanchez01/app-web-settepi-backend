@@ -1,11 +1,14 @@
 from sqlalchemy import create_engine
+from urllib.parse import quote_plus
 from sqlalchemy.orm import sessionmaker, declarative_base
+
+password = quote_plus("admin2026$")
 
 # ================================
 # 🔗 CONFIGURACIÓN DE CONEXIÓN A BD PROD
 # ================================
 DATABASE_URL = (
-    "mssql+pyodbc://adminsql:admin2026$"
+    f"mssql+pyodbc://adminsql:{password}"
     "@databasesettepiapp.database.windows.net:1433/SettepiApp"
     "?driver=ODBC+Driver+18+for+SQL+Server"
     "&Encrypt=yes"
