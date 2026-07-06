@@ -10,6 +10,7 @@ from app.models.colaborador import Colaborador
 
 # routers
 from app.routes.auth import router as auth_router
+from app.routes.system import router as system_router
 from app.routes.general import router as general_router
 from app.routes.lider import router as lider_router
 from app.routes.admin import router as admin_router
@@ -46,6 +47,13 @@ app.add_middleware(
 # (si no existen)
 # ================================
 Base.metadata.create_all(bind=engine)
+
+# ================================
+# ROUTES AUTH
+# ================================
+app.include_router(
+    system_router
+)
 
 # ================================
 # ROUTES AUTH
